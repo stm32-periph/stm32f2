@@ -2,26 +2,32 @@
   ******************************************************************************
   * @file    RNG/RNG_MultiRNG/main.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx.h"
-#include "stm32_eval.h"
+#include "stm322xg_eval.h"
 #include "stm322xg_eval_lcd.h"
 #include <stdio.h>
 
@@ -64,7 +70,7 @@ void Display(uint32_t rng, uint8_t line);
 int main(void)
 {
  uint32_t random32bit = 0;
- uint8_t i = 0;
+ uint8_t Counter = 0;
 
   /*!< At this stage the microcontroller clock setting is already configured, 
        this is done through SystemInit() function which is called from startup
@@ -93,7 +99,7 @@ int main(void)
     {
     }
 
-    for(i = 0; i < 8; i++)
+    for(Counter = 0; Counter < 8; Counter++)
     {
       /* Wait until one RNG number is ready */
       while(RNG_GetFlagStatus(RNG_FLAG_DRDY)== RESET)
@@ -104,7 +110,7 @@ int main(void)
       random32bit = RNG_GetRandomNumber();
 
       /* Display the Random number value on the LCD or/and USART */
-      Display(random32bit, i+1);
+      Display(random32bit, Counter+1);
     }
   }
 }
@@ -259,4 +265,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

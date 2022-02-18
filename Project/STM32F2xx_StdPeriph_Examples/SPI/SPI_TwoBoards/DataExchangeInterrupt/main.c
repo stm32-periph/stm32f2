@@ -2,21 +2,27 @@
   ******************************************************************************
   * @file    SPI/SPI_TwoBoards/DataExchangeInterrupt/main.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -36,17 +42,19 @@
 /* Private variables ---------------------------------------------------------*/
 SPI_InitTypeDef  SPI_InitStructure;
 uint8_t TxBuffer[] = "SPI Interrupt Example: Communication between two SPI using Interrupts";
-__IO uint32_t TimeOut = 0x0;
+__IO uint32_t TimeOut = 0;
 
 #ifdef SPI_SLAVE
  __IO uint8_t RxBuffer [RXBUFFERSIZE];
- __IO uint8_t Rx_Idx = 0x00, Index = 0;
-#else
- __IO JOYState_TypeDef PressedButton  = JOY_NONE;
- __IO uint8_t Tx_Idx = 0x00;
- __IO uint8_t CmdTransmitted = 0x00;
+ __IO uint8_t Rx_Idx = 0;
+#endif
+#ifdef SPI_MASTER
+ JOYState_TypeDef ReleasedButton  = JOY_NONE;
+ JOYState_TypeDef PressedButton   = JOY_NONE;
+ __IO uint8_t Tx_Idx = 0;
+ __IO uint8_t CmdTransmitted = CMD_NONE;
  __IO uint8_t CmdStatus = 0x00;
- __IO uint8_t NumberOfByte = 0x00;
+ __IO uint8_t NumberOfByte = 0;
 #endif
 
 /* Private function prototypes -----------------------------------------------*/
@@ -78,24 +86,26 @@ int main(void)
        system_stm32f2xx.c file
      */
 
-  /* SPI configuration ------------------------------------------------------*/
+  /* SPI configuration -------------------------------------------------------*/
   SPI_Config();
 
   /* SysTick configuration ---------------------------------------------------*/
   SysTickConfig();
 
-  /* Initialize LEDs mounted on STM322xG-EVAL board */
+  /* LEDs configuration ------------------------------------------------------*/
   STM_EVAL_LEDInit(LED1);
   STM_EVAL_LEDInit(LED2);
   STM_EVAL_LEDInit(LED3);
   STM_EVAL_LEDInit(LED4);
 
-  /* Master board configuration ----------------------------------------------*/
 #ifdef SPI_MASTER
+  /* Master board configuration ----------------------------------------------*/
+  
   /* Initialize push-buttons mounted on STM322xG-EVAL board */
   TimeOut = USER_TIMEOUT;
   while ((IOE_Config() != IOE_OK) && (TimeOut != 0x00))
-  {}
+  {
+  }
   
   if(TimeOut == 0)
   {
@@ -105,34 +115,31 @@ int main(void)
   /* Initializes the SPI communication */
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
   SPI_Init(SPIx, &SPI_InitStructure);
-
+  
   /* The Data transfer is performed in the SPI interrupt routine */
   /* Enable the SPI peripheral */
   SPI_Cmd(SPIx, ENABLE);
 
   while (1)
   {
-    PressedButton = JOY_NONE;
-
-    /* Waiting joystick pressed */    
+    /* Prepare Command to be transmitted -------------------------------------*/
+    
+    /* Waiting joystick pressed */  
+    PressedButton = JOY_NONE;  
     while (PressedButton == JOY_NONE)
     {
       PressedButton = IOE_JoyStickGetState();
     }
-    IOE_ClearGITPending(IOE_2_ADDR, IOE_GIT_GPIO);
-    IOE_ClearIOITPending(IOE_2_ADDR, IOE_JOY_IT); 
     
-    /* Waiting joystick released */    
-    while (PressedButton ==IOE_JoyStickGetState())
+    /* Waiting joystick released */  
+    ReleasedButton = IOE_JoyStickGetState();  
+    while ((PressedButton == ReleasedButton) && (ReleasedButton != JOY_NONE))
     {
-      PressedButton = IOE_JoyStickGetState();
-      IOE_ClearGITPending(IOE_2_ADDR, IOE_GIT_GPIO);
-      IOE_ClearIOITPending(IOE_2_ADDR, IOE_JOY_IT);       
+      ReleasedButton = IOE_JoyStickGetState();    
     }
     
-    CmdTransmitted = 0x00;
-    CmdStatus = 0x00;
-    Tx_Idx = 0x00;
+    /* For each joystick state correspond to a Transaction command -----------*/
+    CmdTransmitted = CMD_NONE;
     switch (PressedButton)
     {
       /* JOY_RIGHT button pressed */
@@ -164,7 +171,10 @@ int main(void)
         break;
     }
     
-    if (CmdTransmitted != 0x00)
+    /* Master Transmit Command followed by Data Transaction ------------------*/
+    CmdStatus = 0x00;
+    Tx_Idx = 0;
+    if (CmdTransmitted != CMD_NONE)
     {
       /* Enable the Tx buffer empty interrupt */
       SPI_I2S_ITConfig(SPIx, SPI_I2S_IT_TXE, ENABLE);
@@ -177,36 +187,38 @@ int main(void)
   }
 #endif /* SPI_MASTER */
 
-  /* Slave board configuration ----------------------------------------------*/
 #ifdef SPI_SLAVE
+  /* Slave board configuration -----------------------------------------------*/
+  
   /* Initializes the SPI communication */
   SPI_I2S_DeInit(SPIx);
   SPI_InitStructure.SPI_Mode = SPI_Mode_Slave;
   SPI_Init(SPIx, &SPI_InitStructure);
-
   /* Enable the Rx buffer not empty interrupt */
   SPI_I2S_ITConfig(SPIx, SPI_I2S_IT_RXNE, ENABLE);
-  
   /* Enable the SPI peripheral */
   SPI_Cmd(SPIx, ENABLE);
 
   /* Infinite Loop */
   while (1)
   {
-    Rx_Idx = 0x00;
-    
+
+    Rx_Idx = 0;
     /* Clear the RxBuffer */
     Fill_Buffer(RxBuffer, TXBUFFERSIZE);
     
-    /* Waiting Transaction code Byte reception */
-    while (RxBuffer[0] == 0x00)
-    {}
-    /* Waiting Transaction data reception */
+    /* Waiting Transaction Command Byte reception ----------------------------*/
+    while (RxBuffer[0] == CMD_NONE)
+    {
+    }
+    
+    /* Waiting Transaction Data reception ------------------------------------*/
     TimeOut = 1;
     while (TimeOut != 0x00)
-    {}
+    {
+    }
 
-    /* Check Transaction data correctness */
+    /* Check Transaction data correctness ------------------------------------*/
     switch (RxBuffer[0])
     {
       /* CMD_RIGHT command received */
@@ -280,12 +292,14 @@ static void SPI_Config(void)
   GPIO_InitTypeDef GPIO_InitStructure;
   NVIC_InitTypeDef NVIC_InitStructure;
 
+  /* Peripheral Clock Enable -------------------------------------------------*/
   /* Enable the SPI clock */
   SPIx_CLK_INIT(SPIx_CLK, ENABLE);
-
+  
   /* Enable GPIO clocks */
   RCC_AHB1PeriphClockCmd(SPIx_SCK_GPIO_CLK | SPIx_MISO_GPIO_CLK | SPIx_MOSI_GPIO_CLK, ENABLE);
 
+  /* SPI GPIO Configuration --------------------------------------------------*/
   /* Connect SPI pins to AF5 */  
   GPIO_PinAFConfig(SPIx_SCK_GPIO_PORT, SPIx_SCK_SOURCE, SPIx_SCK_AF);
   GPIO_PinAFConfig(SPIx_MOSI_GPIO_PORT, SPIx_MOSI_SOURCE, SPIx_MOSI_AF);
@@ -437,4 +451,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

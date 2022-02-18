@@ -2,26 +2,32 @@
   ******************************************************************************
   * @file    HASH/HASH_SHA1_MD5/main.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx.h"
-#include "stm32_eval.h"
+#include "stm322xg_eval.h"
 #include "stdio.h"
 
 /** @addtogroup STM32F2xx_StdPeriph_Examples
@@ -179,18 +185,18 @@ void USART_Config(void)
   */
 void Display_MainMessage(uint32_t Len)
 {
-  uint32_t i=0;
+  uint32_t BufferCounter = 0;
   
-  printf("\n\r ======================================\n");
-  printf("\r ====         HASH Example         ====\n");
-  printf("\r ======================================\n");
-  printf("\r ---------------------------------------\n");
-  printf("\r Text to be Hashed ( %d bits): \n", Len*8);
-  printf("\r ---------------------------------------\n");
+  printf("\n\r ======================================\n\r");
+  printf(" ====         HASH Example         ====\n\r");
+  printf(" ======================================\n\r");
+  printf(" ---------------------------------------\n\r");
+  printf(" Text to be Hashed ( %d bits): \n\r", Len*8);
+  printf(" ---------------------------------------\n\r");
 
-  for(i = 0; i < Len ; i++)
+  for(BufferCounter = 0; BufferCounter < Len ; BufferCounter++)
   {
-    printf("%c", Input[i]);
+    printf("%c", Input[BufferCounter]);
   }
 }
 
@@ -201,30 +207,29 @@ void Display_MainMessage(uint32_t Len)
   */
 void Display_SHA1Digest(void)
 {
-  __IO uint8_t i=0;
-  printf("\n\n\r ---------------------------------------\n");
-  printf("\r  SHA1 Message Digest (160 bits):\n");
-  printf("\r ---------------------------------------\n");
-  printf("\r H0 = [0x%02x%02x%02x%02x]  \n",Sha1output[0],
+  printf("\n\r ---------------------------------------\n\r");
+  printf("  SHA1 Message Digest (160 bits):\n\r");
+  printf(" ---------------------------------------\n\r");
+  printf(" H0 = [0x%02x%02x%02x%02x]  \n\r",Sha1output[0],
                                             Sha1output[1],
                                             Sha1output[2],
                                             Sha1output[3]);
-  printf("\r H1 = [0x%02x%02x%02x%02x]  \n",Sha1output[4],
+  printf(" H1 = [0x%02x%02x%02x%02x]  \n\r",Sha1output[4],
                                             Sha1output[5],
                                             Sha1output[6],
                                             Sha1output[7]);
-  printf("\r H2 = [0x%02x%02x%02x%02x]  \n",Sha1output[8],
+  printf(" H2 = [0x%02x%02x%02x%02x]  \n\r",Sha1output[8],
                                             Sha1output[9],
                                             Sha1output[10],
                                             Sha1output[11]);
-  printf("\r H3 = [0x%02x%02x%02x%02x]  \n",Sha1output[12],
+  printf(" H3 = [0x%02x%02x%02x%02x]  \n\r",Sha1output[12],
                                             Sha1output[13],
                                             Sha1output[14],
                                             Sha1output[15]);
-  printf("\r H4 = [0x%02x%02x%02x%02x] \n",Sha1output[16],
-                                             Sha1output[17],
-                                             Sha1output[18],
-                                             Sha1output[19]);
+  printf(" H4 = [0x%02x%02x%02x%02x]  \n\r",Sha1output[16],
+                                            Sha1output[17],
+                                            Sha1output[18],
+                                            Sha1output[19]);
 }
 
 /**
@@ -234,23 +239,22 @@ void Display_SHA1Digest(void)
   */
 void Display_MD5Digest(void)
 {
-
-  printf("\n\r ---------------------------------------\n");
-  printf("\r  MD5 Message Digest (128 bits):\n");
-  printf("\r ---------------------------------------\n");
-  printf("\r A = [0x%02x%02x%02x%02x]  \n", Md5output[0],
+  printf("\n\r ---------------------------------------\n\r");
+  printf("  MD5 Message Digest (128 bits):\n\r");
+  printf(" ---------------------------------------\n\r");
+  printf(" A = [0x%02x%02x%02x%02x]  \n\r", Md5output[0],
                                             Md5output[1],
                                             Md5output[2],
                                             Md5output[3]);
-  printf("\r B = [0x%02x%02x%02x%02x]  \n", Md5output[4],
+  printf(" B = [0x%02x%02x%02x%02x]  \n\r", Md5output[4],
                                             Md5output[5],
                                             Md5output[6],
                                             Md5output[7]);
-  printf("\r C = [0x%02x%02x%02x%02x]  \n", Md5output[8],
+  printf(" C = [0x%02x%02x%02x%02x]  \n\r", Md5output[8],
                                             Md5output[9],
                                             Md5output[10],
                                             Md5output[11]);
-  printf("\r D = [0x%02x%02x%02x%02x]  \n", Md5output[12],
+  printf(" D = [0x%02x%02x%02x%02x]  \n\r", Md5output[12],
                                             Md5output[13],
                                             Md5output[14],
                                             Md5output[15]);
@@ -304,4 +308,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

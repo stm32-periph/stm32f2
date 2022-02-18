@@ -2,26 +2,32 @@
   ******************************************************************************
   * @file    ADC/DualADC_Interleaved_DMAmode3/main.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx.h"
-#include "stm32_eval.h"
+#include "stm322xg_eval.h"
 #include "stm322xg_eval_lcd.h"
 #include <stdio.h>
 
@@ -129,14 +135,13 @@ int main(void)
   /* ADC1 regular channel 12 configuration ************************************/
   ADC_InitStructure.ADC_ScanConvMode = DISABLE;
   ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
-  ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;   
+  ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;  
+  ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
   ADC_InitStructure.ADC_NbrOfConversion = 1;
   ADC_Init(ADC1, &ADC_InitStructure);
   /* ADC1 regular channel12 configuration */ 
   ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 1, ADC_SampleTime_3Cycles);
-  /* Enable ADC1 DMA */
-  ADC_DMACmd(ADC1, ENABLE);  
 
   /* ADC2 regular channel 12 configuration ************************************/
   ADC_Init(ADC2, &ADC_InitStructure);
@@ -172,7 +177,7 @@ int main(void)
   */
 void Display(void)
 {
-  uint32_t v=0,mv=0;
+  uint32_t Voltage =0, mVoltage=0;
   uint8_t text[50];
   __IO uint32_t ADC1ConvertedVoltage;
   __IO uint32_t ADC2ConvertedVoltage;
@@ -182,18 +187,18 @@ void Display(void)
   ADC1ConvertedValue = (ADCDualConvertedValue & 0x00FF);
   ADC1ConvertedVoltage = ADC1ConvertedValue *3300/0xFF;
 
-  v = (ADC1ConvertedVoltage)/1000;
-  mv = (ADC1ConvertedVoltage%1000)/100;
-  sprintf((char*)text,"   ADC1 = %d,%d V   ",v,mv);
+  Voltage = (ADC1ConvertedVoltage)/1000;
+  mVoltage = (ADC1ConvertedVoltage%1000)/100;
+  sprintf((char*)text,"   ADC1 = %d,%d V   ",Voltage,mVoltage);
   LCD_DisplayStringLine(LINE(6),text);
 
 
   ADC2ConvertedValue = (ADCDualConvertedValue >>8);
   ADC2ConvertedVoltage = ADC2ConvertedValue *3300/0xFF;
 
-  v=ADC2ConvertedVoltage/1000;
-  mv = (ADC2ConvertedVoltage%1000)/100;
-  sprintf((char*)text,"   ADC2 = %d,%d V   ",v,mv);
+  Voltage=ADC2ConvertedVoltage/1000;
+  mVoltage = (ADC2ConvertedVoltage%1000)/100;
+  sprintf((char*)text,"   ADC2 = %d,%d V   ",Voltage,mVoltage);
   LCD_DisplayStringLine(LINE(7),text);
 }
 
@@ -266,4 +271,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

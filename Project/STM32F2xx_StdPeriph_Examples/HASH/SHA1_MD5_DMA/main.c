@@ -2,26 +2,32 @@
   ******************************************************************************
   * @file    HASH/SHA1_MD5_DMA/main.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx.h"
-#include "stm32_eval.h"
+#include "stm322xg_eval.h"
 #include "stdio.h"
 
 /** @addtogroup STM32F2xx_StdPeriph_Examples
@@ -187,10 +193,10 @@ void HASH_MD5_DMA(void)
   DMA_InitTypeDef DMA_InitStructure;
 
   /* HASH Configuration */
-  HASH_StructInit(&HASH_InitStructure);
   HASH_InitStructure.HASH_AlgoSelection = HASH_AlgoSelection_MD5;
   HASH_InitStructure.HASH_AlgoMode = HASH_AlgoMode_HASH;
   HASH_InitStructure.HASH_DataType = HASH_DataType_32b;
+  HASH_InitStructure.HASH_HMACKeyType = HASH_HMACKeyType_ShortKey;
   HASH_Init(&HASH_InitStructure);
 
   /*DMA Configuration*/
@@ -241,22 +247,22 @@ void HASH_MD5_DMA(void)
   */
 void Display_MainMessage(void)
 {
-  uint32_t i=0;
+  uint32_t BufferCounter=0;
   
-  printf("\n\r ======================================\n");
-  printf("\r ====    HASH Using DMA Example    ====\n");
-  printf("\r ======================================\n");
-  printf("\r ---------------------------------------\n");
-  printf("\r Text to be Hashed (%d bits):\n", SIZE_MSG_TO_HASH_IN_BYTES*8);
-  printf("\r ---------------------------------------\n");
+  printf("\n\r ======================================\n\r");
+  printf(" ====    HASH Using DMA Example    ====\n\r");
+  printf(" ======================================\n\r");
+  printf(" ---------------------------------------\n\r");
+  printf(" Text to be Hashed (%d bits):\n\r", SIZE_MSG_TO_HASH_IN_BYTES*8);
+  printf(" ---------------------------------------\n\r");
 
-  for(i = 0; i <SIZE_MSG_TO_HASH_IN_BYTES; i++)
+  for(BufferCounter = 0; BufferCounter <SIZE_MSG_TO_HASH_IN_BYTES; BufferCounter++)
   {
-    printf("%c", MessageToHash[i]);
+    printf("%c", MessageToHash[BufferCounter]);
     
-    if(((i%31) == 0) && (i != 0))
+    if(((BufferCounter%31) == 0) && (BufferCounter != 0))
     {
-      printf("\n");
+      printf("\n\r");
     }
   }
 }
@@ -268,14 +274,14 @@ void Display_MainMessage(void)
   */
 void Display_SHA1Digest(void)
 {
-  printf("\n\n\r ---------------------------------------\n");
-  printf("\r SHA1 Message Digest (160 bits):\n");
-  printf("\r ---------------------------------------\n");
-  printf("\r H0 = [0x%x]  \n", MsgDigest.Data[0]);
-  printf("\r H1 = [0x%x]  \n", MsgDigest.Data[1]);
-  printf("\r H2 = [0x%x]  \n", MsgDigest.Data[2]);
-  printf("\r H3 = [0x%x]  \n", MsgDigest.Data[3]);
-  printf("\r H4 = [0x%x]  \n", MsgDigest.Data[4]);
+  printf("\n\r ---------------------------------------\n\r");
+  printf(" SHA1 Message Digest (160 bits):\n\r");
+  printf(" ---------------------------------------\n\r");
+  printf(" H0 = [0x%x]  \n\r", MsgDigest.Data[0]);
+  printf(" H1 = [0x%x]  \n\r", MsgDigest.Data[1]);
+  printf(" H2 = [0x%x]  \n\r", MsgDigest.Data[2]);
+  printf(" H3 = [0x%x]  \n\r", MsgDigest.Data[3]);
+  printf(" H4 = [0x%x]  \n\r", MsgDigest.Data[4]);
 }
 
 /**
@@ -285,13 +291,13 @@ void Display_SHA1Digest(void)
   */
 void Display_MD5Digest(void)
 {
-  printf("\n\n\r ---------------------------------------\n");
-  printf("\r MD5 Message Digest (128 bits):\n");
-  printf("\r ---------------------------------------\n");
-  printf("\r A = [0x%x]  \n", MsgDigest.Data[0]);
-  printf("\r B = [0x%x]  \n", MsgDigest.Data[1]);
-  printf("\r C = [0x%x]  \n", MsgDigest.Data[2]);
-  printf("\r D = [0x%x]  \n", MsgDigest.Data[3]);
+  printf("\n\r ---------------------------------------\n\r");
+  printf(" MD5 Message Digest (128 bits):\n\r");
+  printf(" ---------------------------------------\n\r");
+  printf(" A = [0x%x]  \n\r", MsgDigest.Data[0]);
+  printf(" B = [0x%x]  \n\r", MsgDigest.Data[1]);
+  printf(" C = [0x%x]  \n\r", MsgDigest.Data[2]);
+  printf(" D = [0x%x]  \n\r", MsgDigest.Data[3]);
 }
 
 /**
@@ -369,4 +375,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

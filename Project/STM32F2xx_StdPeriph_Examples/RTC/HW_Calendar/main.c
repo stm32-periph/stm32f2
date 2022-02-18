@@ -2,20 +2,26 @@
   ******************************************************************************
   * @file    RTC/HW_Calendar/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -100,7 +106,7 @@ int main(void)
     /* Check on RTC init */
     if (RTC_Init(&RTC_InitStructure) == ERROR)
     {
-      printf("\n\r        /!\\***** RTC Prescaler Config failed ********/!\\ \n");
+      printf("\n\r        /!\\***** RTC Prescaler Config failed ********/!\\ \n\r");
     }
 
     /* Configure the time register */
@@ -111,15 +117,15 @@ int main(void)
     /* Check if the Power On Reset flag is set */
     if (RCC_GetFlagStatus(RCC_FLAG_PORRST) != RESET)
     {
-      printf("\r\n Power On Reset occurred....\n");
+      printf("\r\n Power On Reset occurred....\n\r");
     }
     /* Check if the Pin Reset flag is set */
     else if (RCC_GetFlagStatus(RCC_FLAG_PINRST) != RESET)
     {
-      printf("\r\n External Reset occurred....\n");
+      printf("\r\n External Reset occurred....\n\r");
     }
 
-    printf("\r No need to configure RTC....\n");
+    printf("\n\r No need to configure RTC....\n\r");
     
     /* Enable the PWR clock */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
@@ -238,40 +244,40 @@ void RTC_TimeRegulate(void)
 {
   uint32_t tmp_hh = 0xFF, tmp_mm = 0xFF, tmp_ss = 0xFF;
 
-  printf("\r==============Time Settings=====================================\n");
+  printf("\n\r==============Time Settings=====================================\n\r");
   RTC_TimeStructure.RTC_H12     = RTC_H12_AM;
-  printf("\r  Please Set Hours:\n");
+  printf("  Please Set Hours:\n\r");
   while (tmp_hh == 0xFF)
   {
     tmp_hh = USART_Scanf(23);
     RTC_TimeStructure.RTC_Hours = tmp_hh;
   }
-  printf("  %0.2d\n", tmp_hh);
+  printf("  %0.2d\n\r", tmp_hh);
   
-  printf("\r  Please Set Minutes:\n");
+  printf("  Please Set Minutes:\n\r");
   while (tmp_mm == 0xFF)
   {
     tmp_mm = USART_Scanf(59);
     RTC_TimeStructure.RTC_Minutes = tmp_mm;
   }
-  printf("  %0.2d\n", tmp_mm);
+  printf("  %0.2d\n\r", tmp_mm);
   
-  printf("\r  Please Set Seconds:\n");
+  printf("  Please Set Seconds:\n\r");
   while (tmp_ss == 0xFF)
   {
     tmp_ss = USART_Scanf(59);
     RTC_TimeStructure.RTC_Seconds = tmp_ss;
   }
-  printf("  %0.2d\n", tmp_ss);
+  printf("  %0.2d\n\r", tmp_ss);
 
   /* Configure the RTC time register */
   if(RTC_SetTime(RTC_Format_BIN, &RTC_TimeStructure) == ERROR)
   {
-    printf("\n>> !! RTC Set Time failed. !! <<\n");
+    printf("\n\r>> !! RTC Set Time failed. !! <<\n\r");
   } 
   else
   {
-    printf("\n>> !! RTC Set Time success. !! <<\n");
+    printf("\n\r>> !! RTC Set Time success. !! <<\n\r");
     RTC_TimeShow();
     /* Indicator for the RTC configuration */
     RTC_WriteBackupRegister(RTC_BKP_DR0, 0x32F2);
@@ -284,25 +290,25 @@ void RTC_TimeRegulate(void)
   /* Disable the Alarm A */
   RTC_AlarmCmd(RTC_Alarm_A, DISABLE);
 
-  printf("\r==============Alarm A Settings=====================================\n");
+  printf("\n\r==============Alarm A Settings=====================================\n\r");
   RTC_AlarmStructure.RTC_AlarmTime.RTC_H12 = RTC_H12_AM;
-  printf("\r  Please Set Alarm Hours:\n");
+  printf("  Please Set Alarm Hours:\n\r");
   while (tmp_hh == 0xFF)
   {
     tmp_hh = USART_Scanf(23);
     RTC_AlarmStructure.RTC_AlarmTime.RTC_Hours = tmp_hh;
   }
-  printf("  %0.2d\n", tmp_hh);
+  printf("  %0.2d\n\r", tmp_hh);
   
-  printf("\r  Please Set Alarm Minutes:\n");
+  printf("  Please Set Alarm Minutes:\n\r");
   while (tmp_mm == 0xFF)
   {
     tmp_mm = USART_Scanf(59);
     RTC_AlarmStructure.RTC_AlarmTime.RTC_Minutes = tmp_mm;
   }
-  printf("  %0.2d\n", tmp_mm);
+  printf("  %0.2d\n\r", tmp_mm);
   
-  printf("\r  Please Set Alarm Seconds:\n");
+  printf("  Please Set Alarm Seconds:\n\r");
   while (tmp_ss == 0xFF)
   {
     tmp_ss = USART_Scanf(59);
@@ -317,7 +323,7 @@ void RTC_TimeRegulate(void)
 
   /* Configure the RTC Alarm A register */
   RTC_SetAlarm(RTC_Format_BIN, RTC_Alarm_A, &RTC_AlarmStructure);
-  printf("\n>> !! RTC Set Alarm success. !! <<\n");
+  printf("\n\r>> !! RTC Set Alarm success. !! <<\n\r");
   RTC_AlarmShow();
 
   /* Enable the RTC Alarm A Interrupt */
@@ -336,7 +342,7 @@ void RTC_TimeShow(void)
 {
   /* Get the current Time */
   RTC_GetTime(RTC_Format_BIN, &RTC_TimeStructure);
-  printf("\n\r  The current time is :  %0.2d:%0.2d:%0.2d \n", RTC_TimeStructure.RTC_Hours, RTC_TimeStructure.RTC_Minutes, RTC_TimeStructure.RTC_Seconds);
+  printf("\n\r  The current time is :  %0.2d:%0.2d:%0.2d \n\r", RTC_TimeStructure.RTC_Hours, RTC_TimeStructure.RTC_Minutes, RTC_TimeStructure.RTC_Seconds);
 }
 
 /**
@@ -348,7 +354,7 @@ void RTC_AlarmShow(void)
 {
   /* Get the current Alarm */
   RTC_GetAlarm(RTC_Format_BIN, RTC_Alarm_A, &RTC_AlarmStructure);
-  printf("\n\r  The current alarm is :  %0.2d:%0.2d:%0.2d \n", RTC_AlarmStructure.RTC_AlarmTime.RTC_Hours, RTC_AlarmStructure.RTC_AlarmTime.RTC_Minutes, RTC_AlarmStructure.RTC_AlarmTime.RTC_Seconds);
+  printf("\n\r  The current alarm is :  %0.2d:%0.2d:%0.2d \n\r", RTC_AlarmStructure.RTC_AlarmTime.RTC_Hours, RTC_AlarmStructure.RTC_AlarmTime.RTC_Minutes, RTC_AlarmStructure.RTC_AlarmTime.RTC_Seconds);
 }
 
 
@@ -370,7 +376,7 @@ uint8_t USART_Scanf(uint32_t value)
     tmp[index++] = (USART_ReceiveData(EVAL_COM1));
     if ((tmp[index - 1] < 0x30) || (tmp[index - 1] > 0x39))
     {
-      printf("\n\r Please enter valid number between 0 and 9\n");
+      printf("\n\r Please enter valid number between 0 and 9 \n\r");
       index--;
     }
   }
@@ -379,7 +385,7 @@ uint8_t USART_Scanf(uint32_t value)
   /* Checks */
   if (index > value)
   {
-    printf("\n\r Please enter valid number between 0 and %d\n", value);
+    printf("\n\r Please enter valid number between 0 and %d \n\r", value);
     return 0xFF;
   }
   return index;
@@ -432,4 +438,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

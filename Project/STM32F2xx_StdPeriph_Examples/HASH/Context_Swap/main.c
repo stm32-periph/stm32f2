@@ -2,20 +2,26 @@
   ******************************************************************************
   * @file    HASH/Context_Swap/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -198,22 +204,22 @@ int main(void)
 /*=============================================================================
   SHA1/ MD5 Digest Computation without context swap
 ==============================================================================*/
-  printf("\n\n\r>> MD5 Digest Computation without context swap \n");
-  printf("\r>>> Start \n");
+  printf("\n\r>> MD5 Digest Computation without context swap \n\r");
+  printf(">>> Start \n\r");
 
   /* MD5 Digest Computation *******************************/
   HASH_MD5((uint8_t*)Md5Input, MD5_INPUT_TAB_SIZE,Md5output); 
-  printf("\r>>> Done \n");
+  printf(">>> Done \n\r");
 
   /* Display the MD5 digest */
   Display_MD5Digest();
 
-  printf("\n\r>> SHA1 Digest Computation without context swap \n");
-  printf("\r>>> Start \n");
+  printf("\n\r>> SHA1 Digest Computation without context swap \n\r");
+  printf(">>> Start \n\r");
 
   /* SHA1 Digest Computation */
   HASH_SHA1((uint8_t*)Sha1Input, SHA1_INPUT_TAB_SIZE, Sha1output); 
-  printf("\r>>> Done \n");
+  printf(">>> Done \n\r");
 
   /* Display the SHA1 digest */
   Display_SHA1Digest();
@@ -221,8 +227,8 @@ int main(void)
 /*=============================================================================
    SHA1 / MD5 Digest Computation with context swap
 ==============================================================================*/
-  printf("\n\r>> MD5 Digest Computation with context swap \n");
-  printf("\r>>> Start \n");
+  printf("\n\r>> MD5 Digest Computation with context swap \n\r");
+  printf(">>> Start \n\r");
 
   /* Enable TIM6 */
   TIM_Cmd(TIM6, ENABLE);
@@ -233,13 +239,13 @@ int main(void)
   /* Disable TIM2 : no more interrupts */
   TIM_Cmd(TIM6, DISABLE);
 
-  printf("\r ====> During MD5 digest calculation, the context is saved and restored (%d) times to calculate the SHA1 digest \n", ContextSwapCounter);
-  printf("\r>>> Done \n");
+  printf(" ====> During MD5 digest calculation, the context is saved and restored (%d) times to calculate the SHA1 digest \n\r", ContextSwapCounter);
+  printf(">>> Done \n\r");
 
   /* Display the MD5 digest */
   Display_MD5Digest();
 
-  printf("\r>> SHA1 Digest computed during MD5 context swap \n");
+  printf(">> SHA1 Digest computed during MD5 context swap \n\r");
 
   /* Display the SHA1 digest */
   Display_SHA1Digest();
@@ -254,23 +260,23 @@ int main(void)
   */
 void Display_MainMessage(void)
 {
-  uint32_t i=0;
-  printf("\n\r ====================================== \n");
-  printf("\r ====    Context Swap Example      ==== \n");
-  printf("\r ====================================== \n");
-  printf("\r\n --------------------------------------- \n");
-  printf("\r MD5 Text to be Hashed : \n");
-  printf("\r ---------------------------------------\n ");
-  for(i=0; i<MD5_INPUT_TAB_SIZE; i++)
+  uint32_t BufferCounter = 0;
+  printf("\n\r ====================================== \n\r");
+  printf(" ====    Context Swap Example      ==== \n\r");
+  printf(" ====================================== \n\r");
+  printf("\r\n --------------------------------------- \n\r");
+  printf(" MD5 Text to be Hashed : \n\r");
+  printf(" ---------------------------------------\n\r ");
+  for(BufferCounter = 0; BufferCounter<MD5_INPUT_TAB_SIZE; BufferCounter++)
   {
-    printf("%c", Md5Input[i]);
+    printf("%c", Md5Input[BufferCounter]);
   }
-  printf("\n\n\r --------------------------------------- \n");
-  printf("\r SHA1 Text to be Hashed : \n");
-  printf("\r ---------------------------------------\n");
-  for(i=0; i<SHA1_INPUT_TAB_SIZE; i++)
+  printf("\n\r --------------------------------------- \n\r");
+  printf(" SHA1 Text to be Hashed : \n\r");
+  printf(" ---------------------------------------\n\r");
+  for(BufferCounter=0; BufferCounter<SHA1_INPUT_TAB_SIZE; BufferCounter++)
   {
-    printf("%c", Sha1Input[i]);    
+    printf("%c", Sha1Input[BufferCounter]);    
   }
 }
 
@@ -281,27 +287,27 @@ void Display_MainMessage(void)
   */
 void Display_SHA1Digest(void)
 {
-  printf("\r --------------------------------------- \n");
-  printf("\r   SHA1 Message Digest (160 bits): \n");
-  printf("\r ---------------------------------------\n");
+  printf(" --------------------------------------- \n\r");
+  printf("   SHA1 Message Digest (160 bits): \n\r");
+  printf(" ---------------------------------------\n\r");
 
-  printf("\r H0 = [0x%02x%02x%02x%02x]\n",Sha1output[0],
+  printf(" H0 = [0x%02x%02x%02x%02x]\n\r",Sha1output[0],
                                           Sha1output[1],
                                           Sha1output[2],
                                           Sha1output[3]);
-  printf("\r H1 = [0x%02x%02x%02x%02x]\n",Sha1output[4],
+  printf(" H1 = [0x%02x%02x%02x%02x]\n\r",Sha1output[4],
                                           Sha1output[5],
                                           Sha1output[6],
                                           Sha1output[7]);
-  printf("\r H2 = [0x%02x%02x%02x%02x]\n",Sha1output[8],
+  printf(" H2 = [0x%02x%02x%02x%02x]\n\r",Sha1output[8],
                                           Sha1output[9],
                                           Sha1output[10],
                                           Sha1output[11]);
-  printf("\r H3 = [0x%02x%02x%02x%02x]\n",Sha1output[12],
+  printf(" H3 = [0x%02x%02x%02x%02x]\n\r",Sha1output[12],
                                           Sha1output[13],
                                           Sha1output[14],
                                           Sha1output[15]);
-  printf("\r H4 = [0x%02x%02x%02x%02x]\n",Sha1output[16],
+  printf(" H4 = [0x%02x%02x%02x%02x]\n\r",Sha1output[16],
                                           Sha1output[17],
                                           Sha1output[18],
                                           Sha1output[19]);
@@ -314,22 +320,22 @@ void Display_SHA1Digest(void)
   */
 void Display_MD5Digest(void)
 {
-  printf("\r --------------------------------------- \n");
-  printf("\r     MD5 Message Digest (128 bits): \n");
-  printf("\r ---------------------------------------\n");
-  printf("\r A = [0x%02x%02x%02x%02x]\n", Md5output[0],
+  printf(" --------------------------------------- \n\r");
+  printf("     MD5 Message Digest (128 bits): \n\r");
+  printf(" ---------------------------------------\n\r");
+  printf(" A = [0x%02x%02x%02x%02x]\n\r", Md5output[0],
                                           Md5output[1],
                                           Md5output[2],
                                           Md5output[3]);
-  printf("\r B = [0x%02x%02x%02x%02x]\n", Md5output[4],
+  printf(" B = [0x%02x%02x%02x%02x]\n\r", Md5output[4],
                                           Md5output[5],
                                           Md5output[6],
                                           Md5output[7]);
-  printf("\r C = [0x%02x%02x%02x%02x]\n", Md5output[8],
+  printf(" C = [0x%02x%02x%02x%02x]\n\r", Md5output[8],
                                           Md5output[9],
                                           Md5output[10],
                                           Md5output[11]);
-  printf("\r D = [0x%02x%02x%02x%02x]\n", Md5output[12],
+  printf(" D = [0x%02x%02x%02x%02x]\n\r", Md5output[12],
                                           Md5output[13],
                                           Md5output[14],
                                           Md5output[15]);
@@ -455,4 +461,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

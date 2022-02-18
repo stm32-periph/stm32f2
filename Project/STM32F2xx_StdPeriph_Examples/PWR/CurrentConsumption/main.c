@@ -2,26 +2,32 @@
   ******************************************************************************
   * @file    PWR/CurrentConsumption/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx.h"
-#include "stm32_eval.h"
+#include "stm322xg_eval.h"
 #include "stm32f2xx_lp_modes.h"
 
 /** @addtogroup STM32F2xx_StdPeriph_Examples
@@ -36,7 +42,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-__IO uint32_t i = 0;
+__IO uint32_t Counter = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -65,6 +71,26 @@ int main(void)
   /* Reset RTC Domain */
   RCC_BackupResetCmd(ENABLE);
   RCC_BackupResetCmd(DISABLE);
+  
+  /* Check that the system was resumed from StandBy mode */ 
+  if(PWR_GetFlagStatus(PWR_FLAG_SB) != RESET)
+  {
+    /* Clear SB Flag */
+    PWR_ClearFlag(PWR_FLAG_SB);
+    
+    /* Initialize LED1 on STM322xG-EVAL board */
+    STM_EVAL_LEDInit(LED1);
+
+    /* Infinite loop */
+    while (1)
+    {
+      /* Toggle The LED1 */
+      STM_EVAL_LEDToggle(LED1);
+
+      /* Inserted Delay */
+      for(Counter = 0; Counter < 0x5FFFF; Counter++);
+    }
+  }
 
   /*  Configure Key Button */
   STM_EVAL_PBInit(BUTTON_KEY,BUTTON_MODE_GPIO);
@@ -133,7 +159,7 @@ int main(void)
     STM_EVAL_LEDToggle(LED1);
 
     /* Inserted Delay */
-    for(i = 0; i < 0x5FF; i++);
+    for(Counter = 0; Counter < 0x5FF; Counter++);
   }
 #endif
 }
@@ -167,4 +193,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

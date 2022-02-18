@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm322xg_eval.c
   * @author  MCD Application Team
-  * @version V4.6.1
-  * @date    18-April-2011
+  * @version V5.0.3
+  * @date    09-March-2012
   * @brief   This file provides
   *            - set of firmware functions to manage Leds, push-button and COM ports
   *            - low level initialization functions for SD card (on SDIO) and
@@ -14,17 +14,23 @@
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
-  */ 
-  
+  */
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm322xg_eval.h"
 #include "stm32f2xx_sdio.h"
@@ -487,7 +493,7 @@ void SD_LowLevel_DMA_TxConfig(uint32_t *BufferSRC, uint32_t BufferSize)
   SDDMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_INC4;
   SDDMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_INC4;
   DMA_Init(SD_SDIO_DMA_STREAM, &SDDMA_InitStructure);
-
+  DMA_ITConfig(SD_SDIO_DMA_STREAM, DMA_IT_TC, ENABLE);
   DMA_FlowControllerConfig(SD_SDIO_DMA_STREAM, DMA_FlowCtrl_Peripheral);
 
   /* DMA2 Stream3  or Stream6 enable */
@@ -529,22 +535,13 @@ void SD_LowLevel_DMA_RxConfig(uint32_t *BufferDST, uint32_t BufferSize)
   SDDMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_INC4;
   SDDMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_INC4;
   DMA_Init(SD_SDIO_DMA_STREAM, &SDDMA_InitStructure);
-
+  DMA_ITConfig(SD_SDIO_DMA_STREAM, DMA_IT_TC, ENABLE);
   DMA_FlowControllerConfig(SD_SDIO_DMA_STREAM, DMA_FlowCtrl_Peripheral);
 
   /* DMA2 Stream3 or Stream6 enable */
   DMA_Cmd(SD_SDIO_DMA_STREAM, ENABLE);
 }
 
-/**
-  * @brief  Returns the DMA End Of Transfer Status.
-  * @param  None
-  * @retval DMA SDIO Stream Status.
-  */
-uint32_t SD_DMAEndOfTransferStatus(void)
-{
-  return (uint32_t)DMA_GetFlagStatus(SD_SDIO_DMA_STREAM, SD_SDIO_DMA_FLAG_TCIF);
-}
 /**
   * @brief  DeInitializes peripherals used by the I2C EEPROM driver.
   * @param  None
@@ -617,7 +614,12 @@ void sEE_LowLevel_Init(void)
   /* Release reset signal of sEE_I2C IP */
   RCC_APB1PeriphResetCmd(sEE_I2C_CLK, DISABLE);
     
-  /*!< GPIO configuration */  
+  /*!< GPIO configuration */
+  /* Connect PXx to I2C_SCL*/
+  GPIO_PinAFConfig(sEE_I2C_SCL_GPIO_PORT, sEE_I2C_SCL_SOURCE, sEE_I2C_SCL_AF);
+  /* Connect PXx to I2C_SDA*/
+  GPIO_PinAFConfig(sEE_I2C_SDA_GPIO_PORT, sEE_I2C_SDA_SOURCE, sEE_I2C_SDA_AF);  
+  
   /*!< Configure sEE_I2C pins: SCL */   
   GPIO_InitStructure.GPIO_Pin = sEE_I2C_SCL_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
@@ -625,17 +627,11 @@ void sEE_LowLevel_Init(void)
   GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
   GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
   GPIO_Init(sEE_I2C_SCL_GPIO_PORT, &GPIO_InitStructure);
-
   /*!< Configure sEE_I2C pins: SDA */
   GPIO_InitStructure.GPIO_Pin = sEE_I2C_SDA_PIN;
   GPIO_Init(sEE_I2C_SDA_GPIO_PORT, &GPIO_InitStructure);
 
-  /* Connect PXx to I2C_SCL*/
-  GPIO_PinAFConfig(sEE_I2C_SCL_GPIO_PORT, sEE_I2C_SCL_SOURCE, sEE_I2C_SCL_AF);
-
-  /* Connect PXx to I2C_SDA*/
-  GPIO_PinAFConfig(sEE_I2C_SDA_GPIO_PORT, sEE_I2C_SDA_SOURCE, sEE_I2C_SDA_AF);  
-  
+ 
   /* Configure and enable I2C DMA TX Channel interrupt */
   NVIC_InitStructure.NVIC_IRQChannel = sEE_I2C_DMA_TX_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = sEE_I2C_DMA_PREPRIO;
@@ -738,4 +734,4 @@ void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize, uint32_t Dire
   * @}
   */ 
     
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

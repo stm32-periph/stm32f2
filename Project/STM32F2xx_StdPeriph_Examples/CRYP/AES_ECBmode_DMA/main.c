@@ -2,26 +2,32 @@
   ******************************************************************************
   * @file    CRYP/AES_ECBmode_DMA/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx.h"
-#include "stm32_eval.h"
+#include "stm322xg_eval.h"
 #include "stdio.h"
 
 /** @addtogroup STM32F2xx_StdPeriph_Examples
@@ -132,16 +138,14 @@ void AES128_Encrypt_DMA(void)
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
  
   /* CRYP configuration********************************************************/
-  /* Crypto structures initialisation*/
-  CRYP_StructInit(&CRYP_InitStructure);  
+  /* Crypto key structure initialisation */ 
   CRYP_KeyStructInit(&CRYP_KeyInitStructure);
-
+  
   /* Crypto Init for Encryption process */      
   CRYP_InitStructure.CRYP_AlgoDir  = CRYP_AlgoDir_Encrypt;
   CRYP_InitStructure.CRYP_AlgoMode = CRYP_AlgoMode_AES_ECB;
   CRYP_InitStructure.CRYP_DataType = CRYP_DataType_32b;
   CRYP_InitStructure.CRYP_KeySize  = CRYP_KeySize_128b;
-
   CRYP_Init(&CRYP_InitStructure);
 
   /* Key Initialisation */
@@ -151,9 +155,7 @@ void AES128_Encrypt_DMA(void)
   CRYP_KeyInitStructure.CRYP_Key3Right= AES128key[3];
   CRYP_KeyInit(&CRYP_KeyInitStructure);
 
-  /* Enable Crypto processor **************************************************/
-  CRYP_Cmd(ENABLE);
-
+  /* Enable DMA Requests ******************************************************/
   CRYP_DMACmd(CRYP_DMAReq_DataIN, ENABLE);
   CRYP_DMACmd(CRYP_DMAReq_DataOUT, ENABLE);
   
@@ -165,9 +167,9 @@ void AES128_Encrypt_DMA(void)
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
-  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Enable;
+  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;  
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -194,9 +196,12 @@ void AES128_Encrypt_DMA(void)
   DMA_Cmd(DMA2_Stream6, ENABLE);
   DMA_Cmd(DMA2_Stream5, ENABLE);
   
+  /* Enable Crypto processor *************************************************/
+  CRYP_Cmd(ENABLE);
+  
   /* wait until the last transfer from OUT FIFO :
    all encrypted Data are transferred from crypt processor */
-  while (DMA_GetFlagStatus(DMA2_Stream6, DMA_FLAG_TCIF5) == RESET);
+  while (DMA_GetFlagStatus(DMA2_Stream5, DMA_FLAG_TCIF5) == RESET);
 
   /* Disable Crypto and DMA **************************************************/
   CRYP_Cmd(DISABLE);
@@ -244,10 +249,13 @@ void AES128_Decrypt_DMA(void)
   CRYP_KeyInit(&CRYP_KeyInitStructure);
 
   /* Enable Crypto processor */
-   CRYP_Cmd(ENABLE);
+  CRYP_Cmd(ENABLE);
 
   /* wait until the Busy flag is reset */
    while (CRYP_GetFlagStatus(CRYP_FLAG_BUSY) != RESET);
+   
+  /* Disable Crypto processor */  
+  CRYP_Cmd(DISABLE);
 
   /* Crypto Init for Decryption process */ 
   CRYP_InitStructure.CRYP_AlgoDir = CRYP_AlgoDir_Decrypt;
@@ -256,10 +264,12 @@ void AES128_Decrypt_DMA(void)
   CRYP_InitStructure.CRYP_KeySize  = CRYP_KeySize_128b;
 
   CRYP_Init(&CRYP_InitStructure);
-  CRYP_Cmd(ENABLE);
 
+  
+  /* Enable DMA Requests ******************************************************/
   CRYP_DMACmd(CRYP_DMAReq_DataIN, ENABLE);
   CRYP_DMACmd(CRYP_DMAReq_DataOUT, ENABLE);  
+  
   /* DMA Configuration*********************************************************/
   DMA_DeInit(DMA2_Stream5);
   DMA_DeInit(DMA2_Stream6);
@@ -269,10 +279,10 @@ void AES128_Decrypt_DMA(void)
   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
   DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
-  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
-  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_INC4;
-  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_INC4;  
+  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Enable;
+  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
+  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;;
+  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;;  
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStructure.DMA_BufferSize = DATA_SIZE;
@@ -292,14 +302,17 @@ void AES128_Decrypt_DMA(void)
 
   /* Configure the DMA Stream 5 */
   DMA_Init(DMA2_Stream5, &DMA_InitStructure);
-
+  
   /* Enable DMA streams*******************************************************/
   DMA_Cmd(DMA2_Stream6, ENABLE);
   DMA_Cmd(DMA2_Stream5, ENABLE);
+  
+  /* Enable Crypto processor *************************************************/
+  CRYP_Cmd(ENABLE);
 
   /* wait until the last transfer from OUT FIFO :
    all encrypted Data are transferred from crypt processor */
-  while (DMA_GetFlagStatus(DMA2_Stream6, DMA_FLAG_TCIF5) == RESET);
+  while (DMA_GetFlagStatus(DMA2_Stream5, DMA_FLAG_TCIF5) == RESET);
 
 
   /* Disable Crypto and DMA **************************************************/
@@ -322,12 +335,12 @@ void Display_PlainData(void)
   uint32_t i=0;
   uint8_t count=0;
   
-  printf("\n\r ======================================\n");
-  printf("\r === CRYP AES-128 Using DMA Example ===\n");
-  printf("\r ======================================\n");
-  printf("\r ---------------------------------------\n");
-  printf("\r Plain Data :\n");
-  printf("\r ---------------------------------------\n");
+  printf(" \n\r======================================\n\r");
+  printf(" === CRYP AES-128 Using DMA Example ===\n\r");
+  printf(" ======================================\n\r");
+  printf(" ---------------------------------------\n\r");
+  printf(" Plain Data :\n\r");
+  printf(" ---------------------------------------\n\r");
   
   for(i = 0; i < DATA_SIZE; i++)
   {
@@ -337,13 +350,13 @@ void Display_PlainData(void)
     if(count == 4)
     { 
       count = 0;
-      printf("  Block %d \n", i/4);
+      printf("  Block %d \n\r", i/4);
     }
   }
 
-  printf("\n\r ---------------------------------------\n");
-  printf("\r Key :\n");
-  printf("\r ---------------------------------------\n");
+  printf(" ---------------------------------------\n\r");
+  printf(" Key :\n\r");
+  printf(" ---------------------------------------\n\r");
   
   for(i = 0; i < 4; i++)
   {
@@ -363,9 +376,9 @@ void Display_EncryptedData(void)
   uint32_t i=0;
   uint8_t count=0;
 
-  printf("\n\n\r ---------------------------------------\n");
-  printf("\r AES-128 Encrypted Data:\n");
-  printf("\r ---------------------------------------\n");
+  printf("\n\r ---------------------------------------\n\r");
+  printf(" AES-128 Encrypted Data:\n\r");
+  printf(" ---------------------------------------\n\r");
   
   for(i = 0; i < DATA_SIZE; i++)
   {
@@ -375,7 +388,7 @@ void Display_EncryptedData(void)
     if(count == 4)
     { 
       count = 0;
-      printf("  Block %d \n", i/4);
+      printf("  Block %d \n\r", i/4);
     }
   }
 }
@@ -390,9 +403,9 @@ void Display_DecryptedData(void)
   uint32_t i=0;
   uint8_t count=0;
 
-  printf("\n\r ---------------------------------------\n");
-  printf("\r AES-128 Decrypted Data:\n");
-  printf("\r ---------------------------------------\n");
+  printf("\n\r ---------------------------------------\n\r");
+  printf(" AES-128 Decrypted Data:\n\r");
+  printf(" ---------------------------------------\n\r");
   
   for(i = 0; i < DATA_SIZE; i++)
   {
@@ -402,7 +415,7 @@ void Display_DecryptedData(void)
     if(count == 4)
     { 
       count = 0;
-      printf("  Block %d \n", i/4);
+      printf("  Block %d \n\r", i/4);
     }
   }
 }
@@ -483,4 +496,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

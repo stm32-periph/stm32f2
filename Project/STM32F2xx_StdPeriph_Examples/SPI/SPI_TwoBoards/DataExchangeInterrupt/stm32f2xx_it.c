@@ -2,22 +2,28 @@
   ******************************************************************************
   * @file    SPI/SPI_TwoBoards/DataExchangeInterrupt/stm32f2xx_it.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main Interrupt Service Routines.
   *          This file provides template for all exceptions handler and 
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -37,20 +43,19 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern uint8_t TxBuffer[];
-__IO uint8_t Counter = 0x00;
-extern __IO uint32_t TimeOut;
-
 #ifdef SPI_SLAVE
- extern __IO uint8_t CmdReceived;
  extern  __IO uint8_t RxBuffer[];
  extern __IO uint8_t Rx_Idx;
-#else
+#endif
+#ifdef SPI_MASTER
  extern __IO uint8_t CmdTransmitted;
  extern __IO uint8_t Tx_Idx;
  extern __IO uint8_t CmdStatus;
- extern __IO uint8_t NumberOfByte;
 #endif
+
+extern uint8_t TxBuffer[];
+extern __IO uint32_t TimeOut;
+__IO uint8_t Counter = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -155,7 +160,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* Decrement the timeout value */
-  if (TimeOut != 0x0)
+  if (TimeOut != 0)
   {
     TimeOut--;
   }
@@ -166,7 +171,7 @@ void SysTick_Handler(void)
   }
   else
   {
-    Counter = 0x00;
+    Counter = 0;
     STM_EVAL_LEDToggle(LED1);
   }
 }
@@ -200,13 +205,14 @@ void SPIx_IRQHANDLER(void)
   {
     RxBuffer[Rx_Idx++] = SPI_I2S_ReceiveData(SPIx);
   }
-#else
+#endif 
+#ifdef SPI_MASTER
   /* SPI in Master Tramitter mode--------------------------------------- */
   if (SPI_I2S_GetITStatus(SPIx, SPI_I2S_IT_TXE) == SET)
   {
     if (CmdStatus == 0x00)
     {
-	  /* Send Transaction code */
+	    /* Send Transaction code */
       SPI_I2S_SendData(SPIx, CmdTransmitted);
       CmdStatus = 0x01;
     }
@@ -214,8 +220,8 @@ void SPIx_IRQHANDLER(void)
     {
       if (Tx_Idx < GetVar_NbrOfData())
       {
-	    /* Send Transaction data */
-       SPI_I2S_SendData(SPIx, TxBuffer[Tx_Idx++]);
+	      /* Send Transaction data */
+        SPI_I2S_SendData(SPIx, TxBuffer[Tx_Idx++]);
       }
       else
       {
@@ -235,4 +241,4 @@ void SPIx_IRQHANDLER(void)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

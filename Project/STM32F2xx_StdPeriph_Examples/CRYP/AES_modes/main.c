@@ -2,26 +2,32 @@
   ******************************************************************************
   * @file    CRYP/AES_modes/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx.h"
-#include "stm32_eval.h"
+#include "stm322xg_eval.h"
 #include "stdio.h"
 
 /** @addtogroup STM32F2xx_StdPeriph_Examples
@@ -340,25 +346,25 @@ int main(void)
   */
 void Display_PlainData(uint32_t datalength)
 {
-  uint32_t i=0;
+  uint32_t BufferCounter =0;
   uint32_t count = 0;
   
-  printf("\n\r =============================================================\n");
-  printf("\r ================= Crypt Using HW Crypto  ====================\n");
-  printf("\r ============================================================\n");
-  printf("\r ---------------------------------------\n");
-  printf("\r Plain Data :\n");
-  printf("\r ---------------------------------------\n");
+  printf("\n\r =============================================================\n\r");
+  printf(" ================= Crypt Using HW Crypto  ====================\n\r");
+  printf(" ============================================================\n\r");
+  printf(" ---------------------------------------\n\r");
+  printf(" Plain Data :\n\r");
+  printf(" ---------------------------------------\n\r");
   
-  for(i = 0; i < datalength; i++)
+  for(BufferCounter = 0; BufferCounter < datalength; BufferCounter++)
   {
-    printf("[0x%02X]", Plaintext[i]);
+    printf("[0x%02X]", Plaintext[BufferCounter]);
     count++;
 
     if(count == 16)
     { 
       count = 0;
-      printf("  Block %d \n", i/16);
+      printf("  Block %d \n\r", BufferCounter/16);
     }
   }
 }
@@ -372,36 +378,36 @@ void Display_PlainData(uint32_t datalength)
   */
 void Display_EncryptedData(uint8_t mode, uint16_t keysize, uint32_t datalength)
 {
-  uint32_t i=0;
+  uint32_t BufferCounter = 0;
   uint32_t count = 0;
 
-  printf("\n\r =======================================\n");
-  printf("\r Encrypted Data with AES %d  Mode  ",keysize );
+  printf("\n\r =======================================\n\r");
+  printf(" Encrypted Data with AES %d  Mode  ",keysize );
 
   if(mode == ECB)
   {
-    printf("ECB\n");
+    printf("ECB\n\r");
   }    
   else if(mode == CBC)     
   {
-    printf("CBC\n");
+    printf("CBC\n\r");
   }      
   else /* if(mode == CTR)*/ 
   {
-    printf("CTR\n");
+    printf("CTR\n\r");
   }   
 
-  printf("\r ---------------------------------------\n");
+  printf(" ---------------------------------------\n\r");
   
-  for(i = 0; i < datalength; i++)
+  for(BufferCounter = 0; BufferCounter < datalength; BufferCounter++)
   {
-    printf("[0x%02X]", Encryptedtext[i]);
+    printf("[0x%02X]", Encryptedtext[BufferCounter]);
 
     count++;
     if(count == 16)
     { 
       count = 0;
-      printf(" Block %d \n", i/16);
+      printf(" Block %d \n\r", BufferCounter/16);
     }
   }
 }
@@ -415,36 +421,36 @@ void Display_EncryptedData(uint8_t mode, uint16_t keysize, uint32_t datalength)
   */
 void Display_DecryptedData(uint8_t mode, uint16_t keysize, uint32_t datalength)
 {
-  uint32_t i = 0;
+  uint32_t BufferCounter = 0;
   uint32_t count = 0;
 
-  printf("\n\r =======================================\n");
-  printf("\r Decrypted Data with AES %d  Mode  ",keysize );
+  printf("\n\r =======================================\n\r");
+  printf(" Decrypted Data with AES %d  Mode  ",keysize );
 
   if(mode == ECB)
   {
-    printf("ECB\n");
+    printf("ECB\n\r");
   }    
   else if(mode == CBC)     
   {
-    printf("CBC\n");
+    printf("CBC\n\r");
   }      
   else /* if(mode == CTR)*/ 
   {
-    printf("CTR\n");
+    printf("CTR\n\r");
   }   
  
-  printf("\r ---------------------------------------\n");
+  printf(" ---------------------------------------\n\r");
   
-  for(i = 0; i < datalength; i++)
+  for(BufferCounter = 0; BufferCounter < datalength; BufferCounter++)
   {
-    printf("[0x%02X]", Decryptedtext[i]);
+    printf("[0x%02X]", Decryptedtext[BufferCounter]);
     count++;
 
     if(count == 16)
     { 
       count = 0;
-      printf(" Block %d \n", i/16);
+      printf(" Block %d \n\r", BufferCounter/16);
     }
   }
 }
@@ -476,7 +482,7 @@ void USART_Config(void)
 char PressToContinue(void)
 {
   char c; 
-  printf("\n\r Press any key to continue...\n ");
+  printf("\n\r Press any key to continue...\n\r ");
 
   while (USART_GetFlagStatus(EVAL_COM1, USART_FLAG_RXNE) == RESET)
   {
@@ -534,4 +540,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

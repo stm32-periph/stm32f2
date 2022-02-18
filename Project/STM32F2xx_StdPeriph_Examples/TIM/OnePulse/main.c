@@ -2,20 +2,26 @@
   ******************************************************************************
   * @file    TIM/OnePulse/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -61,26 +67,41 @@ int main(void)
   /* TIM Configuration */
   TIM_Config();
 
-  /* TIM4 configuration: One Pulse mode ------------------------
-     The external signal is connected to TIM4_CH2 pin (PB.07), 
-     The Rising edge is used as active edge,
-     The One Pulse signal is output on TIM4_CH1 pin (PB.06)
-     The TIM_Pulse defines the delay value 
-     The (TIM_Period -  TIM_Pulse) defines the One Pulse value.
-     TIM2CLK = SystemCoreClock/2, we want to get TIM2 counter clock at 30 MHz:
-     - Prescaler = (TIM2CLK / TIM2 counter clock) - 1
-     The Autoreload value is 65535 (TIM4->ARR), so the maximum frequency value 
-     to trigger the TIM4 input is 30000000/65535 = 458 Hz.
+  /* --------------------------------------------------------------------------
+    TIM4 configuration: One Pulse mode
+    The external signal is connected to TIM4_CH2 pin (PB.07), 
+    The Rising edge is used as active edge,
+    The One Pulse signal is output on TIM4_CH1 pin (PB.06)
+    The TIM_Pulse defines the delay value 
+    The (TIM_Period -  TIM_Pulse) defines the One Pulse value.
+     
+    TIM4 input clock (TIM4CLK) is set to 2 * APB1 clock (PCLK1), 
+    since APB1 prescaler is different from 1.   
+      TIM4CLK = 2 * PCLK1  
+      PCLK1 = HCLK / 4 
+      => TIM4CLK = HCLK / 2 = SystemCoreClock /2
 
-     The TIM_Pulse defines the delay value, the delay value is fixed 
-     to 546.1 us:
-     delay =  CCR1/TIM4 counter clock = 546.1 us. 
-     The (TIM_Period - TIM_Pulse) defines the One Pulse value, 
-     the pulse value is fixed to 1.638 ms:
-     One Pulse value = (TIM_Period - TIM_Pulse) / TIM4 counter clock = 1.638 ms.
+    TIM2CLK = SystemCoreClock/2, we want to get TIM2 counter clock at 30 MHz:
+     Prescaler = (TIM2CLK / TIM2 counter clock) - 1
+     Prescaler = ((SystemCoreClock /2) /30 MHz) - 1
+     
+    The Autoreload value is 65535 (TIM4->ARR), so the maximum frequency value 
+    to trigger the TIM4 input is 30000000/65535 = 458 Hz.
 
-  SystemCoreClock is set to 120 MHz.
-  ------------------------------------------------------------ */
+    The TIM_Pulse defines the delay value, the delay value is fixed 
+    to 546.1 us:
+    delay =  CCR1/TIM4 counter clock = 546.1 us. 
+    The (TIM_Period - TIM_Pulse) defines the One Pulse value, 
+    the pulse value is fixed to 1.638 ms:
+    One Pulse value = (TIM_Period - TIM_Pulse) / TIM4 counter clock = 1.638 ms.
+
+    Note: 
+     SystemCoreClock variable holds HCLK frequency and is defined in system_stm32f2xx.c file.
+     Each time the core clock (HCLK) changes, user had to call SystemCoreClockUpdate()
+     function to update SystemCoreClock variable value. Otherwise, any configuration
+     based on this variable will be incorrect.    
+
+  --------------------------------------------------------------------------- */
 
   /* Compute the prescaler value */
   PrescalerValue = (uint16_t) ((SystemCoreClock / 2) / 30000000) - 1;
@@ -187,4 +208,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

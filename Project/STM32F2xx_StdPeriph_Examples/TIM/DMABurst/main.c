@@ -2,20 +2,26 @@
   ******************************************************************************
   * @file    TIM/DMABurst/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -67,14 +73,26 @@ int main(void)
   /* Time base configuration */
   /* -----------------------------------------------------------------------
     TIM1 Configuration: generate 1 PWM signal using the DMA burst mode:
-    The TIM1CLK frequency is set to SystemCoreClock (Hz), to get TIM1 counter
-    clock at 24 MHz the Prescaler is computed as following:
-     - Prescaler = (TIM1CLK / TIM1 counter clock) - 1
-    SystemCoreClock is set to 120 MHz 
-
+   
+    TIM1 input clock (TIM1CLK) is set to 2 * APB2 clock (PCLK2), 
+    since APB2 prescaler is different from 1.   
+      TIM1CLK = 2 * PCLK2  
+      PCLK2 = HCLK / 2 
+      => TIM1CLK = 2 * (HCLK / 2) = HCLK = SystemCoreClock
+    
+    To get TIM1 counter clock at 24 MHz, the prescaler is computed as follows:
+      Prescaler = (TIM1CLK / TIM1 counter clock) - 1
+      Prescaler = (SystemCoreClock /24 MHz) - 1
+  
     The TIM1 period is 5.8 KHz: TIM1 Frequency = TIM1 counter clock/(ARR + 1)
-                                               = 24 MHz / 4096 = 5.8KHz KHz
+                                               = 24 MHz / 4096 = 5.85 KHz
     TIM1 Channel1 duty cycle = (TIM1_CCR1/ TIM1_ARR)* 100 = 33.33%
+  
+    Note: 
+     SystemCoreClock variable holds HCLK frequency and is defined in system_stm32f4xx.c file.
+     Each time the core clock (HCLK) changes, user had to call SystemCoreClockUpdate()
+     function to update SystemCoreClock variable value. Otherwise, any configuration
+     based on this variable will be incorrect.  
   ----------------------------------------------------------------------- */  
   TIM_TimeBaseStructure.TIM_Period = 0xFFFF;          
   TIM_TimeBaseStructure.TIM_Prescaler = (uint16_t) (SystemCoreClock / 24000000) - 1;       
@@ -191,4 +209,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

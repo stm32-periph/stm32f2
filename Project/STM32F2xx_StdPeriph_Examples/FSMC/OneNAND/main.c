@@ -2,25 +2,31 @@
   ******************************************************************************
   * @file    FSMC/OneNAND/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32_eval.h"
+#include "stm322xg_eval.h"
 #include "stm322xg_eval_fsmc_onenand.h"
 
 /** @addtogroup STM32F2xx_StdPeriph_Examples
@@ -46,7 +52,7 @@
 OneNAND_IDTypeDef OneNAND_ID;
 OneNAND_ADDRESS Address;
 uint16_t TxBuffer[OneNAND_BUFFER_SIZE], RxBuffer_A[OneNAND_BUFFER_SIZE], RxBuffer_S[OneNAND_BUFFER_SIZE];
-uint32_t j = 0, PageIndex = 0, Status = 0;
+uint32_t Counter = 0, PageIndex = 0, Status = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 void Fill_hBuffer(uint16_t *pBuffer, uint16_t BufferLenght, uint32_t Offset);
@@ -119,9 +125,9 @@ int main(void)
             OneNAND_AsynchronousRead(RxBuffer_A, Address, OneNAND_BUFFER_SIZE);
    
             /* Verify the written data */
-            for(j = 0; j < OneNAND_BUFFER_SIZE; j++)
+            for(Counter = 0; Counter < OneNAND_BUFFER_SIZE; Counter++)
             {
-              if(TxBuffer[j] != RxBuffer_A[j])
+              if(TxBuffer[Counter] != RxBuffer_A[Counter])
               {
                 Status++;
               }
@@ -147,9 +153,9 @@ int main(void)
             OneNAND_SynchronousRead(RxBuffer_S, Address, OneNAND_BUFFER_SIZE);
    
             /* Verify the written data */
-            for(j = 0; j < OneNAND_BUFFER_SIZE; j++)
+            for(Counter = 0; Counter < OneNAND_BUFFER_SIZE; Counter++)
             {
-              if(TxBuffer[j] != RxBuffer_S[j])
+              if(TxBuffer[Counter] != RxBuffer_S[Counter])
               {
                 Status++;
               }
@@ -247,4 +253,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   */
 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

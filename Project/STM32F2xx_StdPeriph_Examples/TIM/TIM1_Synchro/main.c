@@ -2,20 +2,26 @@
   ******************************************************************************
   * @file    TIM/TIM1_Synchro/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -59,8 +65,9 @@ int main(void)
        
   /* TIM1 Configuration */
   TIM_Config();
-
-  /* TIM1 and Timers(TIM3 and TIM4) synchronisation in parallel mode -----------
+  
+  /* ---------------------------------------------------------------------------
+    TIM1 and Timers(TIM3 and TIM4) synchronisation in parallel mode.
      1/TIM1 is configured as Master Timer:
          - PWM Mode is used
          - The TIM1 Update event is used as Trigger Output
@@ -70,11 +77,18 @@ int main(void)
          - The ITR0(TIM1) is used as input trigger for both slaves
          - Gated mode is used, so starts and stops of slaves counters
            are controlled by the Master trigger output signal(update event).
-
-    The TIM1 counter clock is 120 MHz.
-
+    
+    In this example TIM1 input clock (TIM1CLK) is set to 2 * APB2 clock (PCLK2), 
+    since APB2 prescaler is different from 1.   
+      TIM1CLK = 2 * PCLK2  
+      PCLK2 = HCLK / 2 
+      => TIM1CLK = HCLK = SystemCoreClock
+          
+    The TIM1 counter clock is equal to SystemCoreClock = 120 Mhz.
+                                                               
     The Master Timer TIM1 is running at:
     TIM1 frequency = TIM1 counter clock / (TIM1_Period + 1) = 468.750 KHz
+    TIM1_Period = (TIM1 counter clock / TIM1 frequency) - 1 = 255
     and the duty cycle is equal to: TIM1_CCR1/(TIM1_ARR + 1) = 50%
 
     The TIM3 is running at: 
@@ -84,8 +98,14 @@ int main(void)
     The TIM4 is running at:
     (TIM1 frequency)/ ((TIM4 period +1)* (Repetition_Counter+1)) = 46.875 KHz and
     a duty cycle equal to TIM4_CCR1/(TIM4_ARR + 1) = 50%
-  
-  ----------------------------------------------------------------------------*/
+
+    Note: 
+     SystemCoreClock variable holds HCLK frequency and is defined in system_stm32f2xx.c file.
+     Each time the core clock (HCLK) changes, user had to call SystemCoreClockUpdate()
+     function to update SystemCoreClock variable value. Otherwise, any configuration
+     based on this variable will be incorrect.    
+  --------------------------------------------------------------------------- */   
+
 
   /* TIM3 Peripheral Configuration ----------------------------------------*/
   /* TIM3 Slave Configuration: PWM1 Mode */
@@ -248,4 +268,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

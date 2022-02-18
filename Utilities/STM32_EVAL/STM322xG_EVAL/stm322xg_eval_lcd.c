@@ -2,23 +2,29 @@
   ******************************************************************************
   * @file    stm322xg_eval_lcd.c
   * @author  MCD Application Team
-  * @version V4.6.1
-  * @date    18-April-2011
+  * @version V5.0.3
+  * @date    09-March-2012
   * @brief   This file includes the LCD driver for AM-240320L8TNQW00H (LCD_ILI9320)
   *          and AM240320D5TOQW01H (LCD_ILI9325) Liquid Crystal Display Modules
   *          of STM322xG-EVAL evaluation board(MB786) RevA and RevB.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -84,7 +90,7 @@ typedef struct
 static sFONT *LCD_Currentfonts;
 
   /* Global variables to set the written text color */
-static __IO uint16_t TextColor = 0x0000, BackColor = 0xFFFF;
+__IO uint16_t TextColor = 0x0000, BackColor = 0xFFFF;
   
 /**
   * @}
@@ -274,16 +280,16 @@ void STM322xG_LCD_Init(void)
     LCD_WriteReg(LCD_REG_33, 0x0000); /* GRAM Vertical Address */
 
     /* Adjust the Gamma Curve ------------------------------------------------*/
-    LCD_WriteReg(LCD_REG_48, 0x0006);
-    LCD_WriteReg(LCD_REG_49, 0x0101);
-    LCD_WriteReg(LCD_REG_50, 0x0003);
-    LCD_WriteReg(LCD_REG_53, 0x0106);
-    LCD_WriteReg(LCD_REG_54, 0x0b02);
-    LCD_WriteReg(LCD_REG_55, 0x0302);
-    LCD_WriteReg(LCD_REG_56, 0x0707);
-    LCD_WriteReg(LCD_REG_57, 0x0007);
-    LCD_WriteReg(LCD_REG_60, 0x0600);
-    LCD_WriteReg(LCD_REG_61, 0x020b);
+    LCD_WriteReg(LCD_REG_48, 0x0007);
+    LCD_WriteReg(LCD_REG_49, 0x0007);
+    LCD_WriteReg(LCD_REG_50, 0x0007);
+    LCD_WriteReg(LCD_REG_53, 0x0007);
+    LCD_WriteReg(LCD_REG_54, 0x0007);
+    LCD_WriteReg(LCD_REG_55, 0x0700);
+    LCD_WriteReg(LCD_REG_56, 0x0700);
+    LCD_WriteReg(LCD_REG_57, 0x0700);
+    LCD_WriteReg(LCD_REG_60, 0x0700);
+    LCD_WriteReg(LCD_REG_61, 0x1F00);
   
     /* Set GRAM area ---------------------------------------------------------*/
     LCD_WriteReg(LCD_REG_80, 0x0000); /* Horizontal GRAM Start Address */
@@ -1341,7 +1347,7 @@ void LCD_FSMCConfig(void)
 /*-- FSMC Configuration ------------------------------------------------------*/
 /*----------------------- SRAM Bank 3 ----------------------------------------*/
   /* FSMC_Bank1_NORSRAM4 configuration */
-  p.FSMC_AddressSetupTime = 1;
+  p.FSMC_AddressSetupTime = 3;
   p.FSMC_AddressHoldTime = 0;
   p.FSMC_DataSetupTime = 9;
   p.FSMC_BusTurnAroundDuration = 0;
@@ -1429,4 +1435,4 @@ static void delay(__IO uint32_t nCount)
   * @}
   */  
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

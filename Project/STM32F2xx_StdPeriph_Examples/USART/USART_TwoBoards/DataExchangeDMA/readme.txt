@@ -2,20 +2,27 @@
   @page USART_DataExchangeDMA USART Communication Boards Data Exchange using DMA example
   
   @verbatim
-  ******************** (C) COPYRIGHT 2011 STMicroelectronics *******************
+  ******************** (C) COPYRIGHT 2012 STMicroelectronics *******************
   * @file    USART/USART_TwoBoards/DataExchangeDMA/readme.txt 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Description of the USART Communication Boards Data Exchange using 
   *          DMA example.
   ******************************************************************************
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  *
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
    @endverbatim
 
@@ -28,6 +35,8 @@ to trigger USART communications using DMA and though using USART firmware librar
 
 To use this example, you need to load it on two STM32 boards (let's call them 
 BoardA and BoardB) then connect these two boards through USART lines and GND.
+In the firmware example uncomment the dedicated line in the main.h file to use
+the USART peripheral as STM32 Transmitter or as STM32 Receiver device.
 
 @verbatim
 *------------------------------------------------------------------------------*
@@ -38,7 +47,7 @@ BoardA and BoardB) then connect these two boards through USART lines and GND.
 |        |     __________     |                 |     __________     |         |
 |        |    |   USART  |____|TX_____________RX|____|   USART  |    |         |
 |        |    |  Device1 |____|RX_____________TX|____|  Device2 |    |         |
-|        |    |__________|    |                 |    |__________|    |         |
+|        |    |____TX____|    |                 |    |____RX____|    |         |
 |        |                    |                 |                    |         |
 |        |  O LD1             |                 |  O LD1             |         |
 |        |  O LD2    Joystick |                 |  O LD2    Joystick |         |
@@ -57,18 +66,19 @@ BoardA and BoardB) then connect these two boards through USART lines and GND.
 
 - Software Description
 
-On BoardA, at each joystick buttons press:
-- The USART BoardA sends the specific command to the USART BoardB (the command 
-  contains the transaction code (CMD_RIGHT, CMD_LEFT, CMD_UP, CMD_DOWN or CMD_SEL)
-  followed by the number of data to be transmitted (CMD_RIGHT_SIZE, CMD_LEFT_SIZE, 
-  CMD_UP_SIZE, CMD_DOWN_SIZE or CMD_SEL_SIZE)
+On Transmitter Board, at each joystick buttons press:
+- The USART Transmitter Board sends the specific command to the USART Receiver Board
+  the command contains the transaction code (CMD_RIGHT, CMD_LEFT, CMD_UP, CMD_DOWN 
+  or CMD_SEL) followed by the number of data to be transmitted (CMD_RIGHT_SIZE, 
+  CMD_LEFT_SIZE, CMD_UP_SIZE, CMD_DOWN_SIZE or CMD_SEL_SIZE).
 
-- The USART BoardB receives the command and sends the CMD_ACK command to the USART BoardA
+- The USART Receiver Board receives the specific command (2 bytes received : 1 byte :code 
+  and 1 byte : number of data).
 
-- The USART BoardA receives the CMD_ACK command and sends the number of bytes 
-  from TxBuffer to the USART BoardB.
+- The USART Transmitter Board sends the number of bytes (already defined in the specific 
+  command)from TxBuffer to the USART Receiver Board.
   
-- The USART BoardB compares the number of bytes received with the defined ones into
+- The USART Receiver Board compares the number of bytes received with the defined ones into
   his TxBuffer.
   
   Received data correctness is signaled by LED lightening and though as follow:
@@ -78,10 +88,7 @@ On BoardA, at each joystick buttons press:
    - Joystick DOWN and data correctly received  ==> LD3 ON, LD2 and LD4 are OFF
    - Joystick SEL and data correctly received   ==> LD2, LD3 and LD4 are ON
 
-The steps described above can be also initiated and ensured by BoardB. 
-
-In both boards(BoardA or BoardB), the data transfers is managed using the USART 
-Tx/Rx channels DMA requests.
+In both boards, the data transfers is managed using the USART Tx/Rx channels DMA requests.
 
 The SysTick is configured to generate interrupt each 10ms. A dedicated counter 
 inside the SysTick ISR is used to toggle the LD1 each 100ms indicating that the 
@@ -138,5 +145,7 @@ In order to make the program work, you must do the following :
  - Run the example
 
     
- * <h3><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h3>
+ * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */
+
+

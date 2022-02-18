@@ -2,24 +2,30 @@
   ******************************************************************************
   * @file    stm322xg_eval.h
   * @author  MCD Application Team
-  * @version V4.6.1
-  * @date    18-April-2011
+  * @version V5.0.3
+  * @date    09-March-2012
   * @brief   This file contains definitions for STM322xG_EVAL's Leds, push-buttons
   *          and COM ports hardware resources.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
-  */ 
-  
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
+  */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM322xG_EVAL_H
 #define __STM322xG_EVAL_H
@@ -29,8 +35,8 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32_eval.h"
-#include "stm32f2xx_dma.h"
+#include "stm32f2xx.h"
+#include "stm32_eval_legacy.h"
    
 /** @addtogroup Utilities
   * @{
@@ -51,6 +57,48 @@
 /** @defgroup STM322xG_EVAL_LOW_LEVEL_Exported_Types
   * @{
   */
+typedef enum 
+{
+  LED1 = 0,
+  LED2 = 1,
+  LED3 = 2,
+  LED4 = 3
+} Led_TypeDef;
+
+typedef enum 
+{  
+  BUTTON_WAKEUP = 0,
+  BUTTON_TAMPER = 1,
+  BUTTON_KEY = 2,
+  BUTTON_RIGHT = 3,
+  BUTTON_LEFT = 4,
+  BUTTON_UP = 5,
+  BUTTON_DOWN = 6,
+  BUTTON_SEL = 7
+} Button_TypeDef;
+
+typedef enum 
+{  
+  BUTTON_MODE_GPIO = 0,
+  BUTTON_MODE_EXTI = 1
+} ButtonMode_TypeDef;
+
+typedef enum 
+{ 
+  JOY_NONE = 0,
+  JOY_SEL = 1,
+  JOY_DOWN = 2,
+  JOY_LEFT = 3,
+  JOY_RIGHT = 4,
+  JOY_UP = 5
+} JOYState_TypeDef
+;
+
+typedef enum 
+{
+  COM1 = 0,
+  COM2 = 1
+} COM_TypeDef;
 /**
   * @}
   */ 
@@ -58,6 +106,13 @@
 /** @defgroup STM322xG_EVAL_LOW_LEVEL_Exported_Constants
   * @{
   */ 
+
+/** 
+  * @brief  Define for STM322xG_EVAL board  
+  */ 
+#if !defined (USE_STM322xG_EVAL)
+ #define USE_STM322xG_EVAL
+#endif
 
 /** @addtogroup STM322xG_EVAL_LOW_LEVEL_LED
   * @{
@@ -186,7 +241,9 @@
  #define SD_SDIO_DMA_FLAG_DMEIF        DMA_FLAG_DMEIF3
  #define SD_SDIO_DMA_FLAG_TEIF         DMA_FLAG_TEIF3
  #define SD_SDIO_DMA_FLAG_HTIF         DMA_FLAG_HTIF3
- #define SD_SDIO_DMA_FLAG_TCIF         DMA_FLAG_TCIF3 
+ #define SD_SDIO_DMA_FLAG_TCIF         DMA_FLAG_TCIF3
+ #define SD_SDIO_DMA_IRQn              DMA2_Stream3_IRQn
+ #define SD_SDIO_DMA_IRQHANDLER        DMA2_Stream3_IRQHandler   
 #elif defined SD_SDIO_DMA_STREAM6
  #define SD_SDIO_DMA_STREAM            DMA2_Stream6
  #define SD_SDIO_DMA_CHANNEL           DMA_Channel_4
@@ -194,7 +251,9 @@
  #define SD_SDIO_DMA_FLAG_DMEIF        DMA_FLAG_DMEIF6
  #define SD_SDIO_DMA_FLAG_TEIF         DMA_FLAG_TEIF6
  #define SD_SDIO_DMA_FLAG_HTIF         DMA_FLAG_HTIF6
- #define SD_SDIO_DMA_FLAG_TCIF         DMA_FLAG_TCIF6 
+ #define SD_SDIO_DMA_FLAG_TCIF         DMA_FLAG_TCIF6
+ #define SD_SDIO_DMA_IRQn              DMA2_Stream6_IRQn
+ #define SD_SDIO_DMA_IRQHANDLER        DMA2_Stream6_IRQHandler     
 #endif /* SD_SDIO_DMA_STREAM3 */
 
 /**
@@ -283,7 +342,6 @@ void SD_LowLevel_DeInit(void);
 void SD_LowLevel_Init(void); 
 void SD_LowLevel_DMA_TxConfig(uint32_t *BufferSRC, uint32_t BufferSize);
 void SD_LowLevel_DMA_RxConfig(uint32_t *BufferDST, uint32_t BufferSize);
-uint32_t SD_DMAEndOfTransferStatus(void);
 void sEE_LowLevel_DeInit(void);
 void sEE_LowLevel_Init(void); 
 void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize, uint32_t Direction);
@@ -312,4 +370,4 @@ void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize, uint32_t Dire
   * @}
   */  
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

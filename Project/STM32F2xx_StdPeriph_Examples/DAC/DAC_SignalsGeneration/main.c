@@ -2,26 +2,32 @@
   ******************************************************************************
   * @file    DAC/DAC_SignalsGeneration/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx.h"
-#include "stm32_eval.h"
+#include "stm322xg_eval.h"
 
 /** @addtogroup STM32F2xx_StdPeriph_Examples
   * @{
@@ -130,10 +136,10 @@ int main(void)
   }
 }
 
-/**
+/**             
   * @brief  TIM6 Configuration
-  * @note   TIM6 configuration is based on CPU @120MHz and APB1 @30MHz
-  * @note   TIM6 Update event occurs each 30MHz/256 = 11.71875 KHz    
+  * @note   TIM6 configuration is based on APB1 frequency
+  * @note   TIM6 Update event occurs each TIM6CLK/256   
   * @param  None
   * @retval None
   */
@@ -142,7 +148,22 @@ void TIM6_Config(void)
   TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
   /* TIM6 Periph clock enable */
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
+  
+  /* --------------------------------------------------------
+  TIM3 input clock (TIM6CLK) is set to 2 * APB1 clock (PCLK1), 
+  since APB1 prescaler is different from 1.   
+    TIM6CLK = 2 * PCLK1  
+    TIM6CLK = HCLK / 2 = SystemCoreClock /2 
+          
+  TIM6 Update event occurs each TIM6CLK/256 
 
+  Note: 
+   SystemCoreClock variable holds HCLK frequency and is defined in system_stm32f2xx.c file.
+   Each time the core clock (HCLK) changes, user had to call SystemCoreClockUpdate()
+   function to update SystemCoreClock variable value. Otherwise, any configuration
+   based on this variable will be incorrect.    
+
+  ----------------------------------------------------------- */
   /* Time base configuration */
   TIM_TimeBaseStructInit(&TIM_TimeBaseStructure); 
   TIM_TimeBaseStructure.TIM_Period = 0xFF;          
@@ -173,8 +194,8 @@ void DAC_Ch2_SineWaveConfig(void)
   DAC_InitStructure.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
   DAC_Init(DAC_Channel_2, &DAC_InitStructure);
 
-  /* DMA1_Stream5 channel7 configuration **************************************/
-  DMA_DeInit(DMA1_Stream5);
+  /* DMA1_Stream6 channel7 configuration **************************************/
+  DMA_DeInit(DMA1_Stream6);
   DMA_InitStructure.DMA_Channel = DMA_Channel_7;  
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)DAC_DHR12R2_ADDRESS;
   DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&Sine12bit;
@@ -190,10 +211,10 @@ void DAC_Ch2_SineWaveConfig(void)
   DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-  DMA_Init(DMA1_Stream5, &DMA_InitStructure);
+  DMA_Init(DMA1_Stream6, &DMA_InitStructure);
 
-  /* Enable DMA1_Stream5 */
-  DMA_Cmd(DMA1_Stream5, ENABLE);
+  /* Enable DMA1_Stream6 */
+  DMA_Cmd(DMA1_Stream6, ENABLE);
 
   /* Enable DAC Channel2 */
   DAC_Cmd(DAC_Channel_2, ENABLE);
@@ -217,8 +238,8 @@ void DAC_Ch1_EscalatorConfig(void)
   DAC_InitStructure.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
   DAC_Init(DAC_Channel_1, &DAC_InitStructure);
 
-  /* DMA1_Stream6 channel7 configuration **************************************/  
-  DMA_DeInit(DMA1_Stream6);
+  /* DMA1_Stream5 channel7 configuration **************************************/  
+  DMA_DeInit(DMA1_Stream5);
   DMA_InitStructure.DMA_Channel = DMA_Channel_7;  
   DMA_InitStructure.DMA_PeripheralBaseAddr = DAC_DHR8R1_ADDRESS;
   DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&Escalator8bit;
@@ -234,10 +255,10 @@ void DAC_Ch1_EscalatorConfig(void)
   DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-  DMA_Init(DMA1_Stream6, &DMA_InitStructure);    
+  DMA_Init(DMA1_Stream5, &DMA_InitStructure);    
 
-  /* Enable DMA1_Stream6 */
-  DMA_Cmd(DMA1_Stream6, ENABLE);
+  /* Enable DMA1_Stream5 */
+  DMA_Cmd(DMA1_Stream5, ENABLE);
   
   /* Enable DAC Channel1 */
   DAC_Cmd(DAC_Channel_1, ENABLE);
@@ -317,4 +338,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

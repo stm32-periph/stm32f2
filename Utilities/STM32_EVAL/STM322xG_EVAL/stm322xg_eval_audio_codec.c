@@ -2,22 +2,28 @@
   ******************************************************************************
   * @file    stm322xg_eval_audio_codec.c
   * @author  MCD Application Team
-  * @version V4.6.1
-  * @date    18-April-2011
+  * @version V5.0.3
+  * @date    09-March-2012
   * @brief   This file includes the low layer driver for CS43L22 Audio Codec
   *          available on STM322xG-EVAL evaluation board(MB786) RevA and RevB.  
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */
 
 /*==============================================================================================================================
@@ -1027,17 +1033,24 @@ static void Codec_CtrlInterface_Init(void)
   /* Enable the CODEC_I2C peripheral clock */
   RCC_APB1PeriphClockCmd(CODEC_I2C_CLK, ENABLE);
   
-  /* CODEC_I2C peripheral configuration */
-  I2C_DeInit(CODEC_I2C);
-  I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
-  I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
-  I2C_InitStructure.I2C_OwnAddress1 = 0x33;
-  I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
-  I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-  I2C_InitStructure.I2C_ClockSpeed = I2C_SPEED;
-  /* Enable the I2C peripheral */
-  I2C_Cmd(CODEC_I2C, ENABLE);  
-  I2C_Init(CODEC_I2C, &I2C_InitStructure);
+  /* If the I2C peripheral is already enabled, don't reconfigure it */
+  if ((CODEC_I2C->CR1 & I2C_CR1_PE) != 0)
+  {  
+    /* CODEC_I2C peripheral configuration */
+    I2C_DeInit(CODEC_I2C);
+    I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+    I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+    I2C_InitStructure.I2C_OwnAddress1 = 0x33;
+    I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+    I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+    I2C_InitStructure.I2C_ClockSpeed = I2C_SPEED;
+    
+    /* Enable the I2C peripheral */
+    I2C_Cmd(CODEC_I2C, ENABLE);  
+    
+    /* Initialize the I2C peripheral */
+    I2C_Init(CODEC_I2C, &I2C_InitStructure);
+  }  
 }
 
 /**
@@ -1122,15 +1135,19 @@ static void Codec_GPIO_Init(void)
   RCC_AHB1PeriphClockCmd(CODEC_I2C_GPIO_CLOCK | CODEC_I2S_GPIO_CLOCK, ENABLE);
 
   /* CODEC_I2C SCL and SDA pins configuration -------------------------------------*/
-  GPIO_InitStructure.GPIO_Pin = CODEC_I2C_SCL_PIN | CODEC_I2C_SDA_PIN; 
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
-  GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-  GPIO_Init(CODEC_I2C_GPIO, &GPIO_InitStructure);     
-  /* Connect pins to I2C peripheral */
-  GPIO_PinAFConfig(CODEC_I2C_GPIO, CODEC_I2S_SCL_PINSRC, CODEC_I2C_GPIO_AF);  
-  GPIO_PinAFConfig(CODEC_I2C_GPIO, CODEC_I2S_SDA_PINSRC, CODEC_I2C_GPIO_AF);  
+  /* If the I2C peripheral is already enabled, don't reconfigure it */
+  if ((CODEC_I2C->CR1 & I2C_CR1_PE) != 0)
+  { 
+    GPIO_InitStructure.GPIO_Pin = CODEC_I2C_SCL_PIN | CODEC_I2C_SDA_PIN; 
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+    GPIO_Init(CODEC_I2C_GPIO, &GPIO_InitStructure);     
+    /* Connect pins to Periph */
+    GPIO_PinAFConfig(CODEC_I2C_GPIO, CODEC_I2S_SCL_PINSRC, CODEC_I2C_GPIO_AF);  
+    GPIO_PinAFConfig(CODEC_I2C_GPIO, CODEC_I2S_SDA_PINSRC, CODEC_I2C_GPIO_AF);  
+  }
 
   /* CODEC_I2S pins configuration: WS, SCK and SD pins -----------------------------*/
   GPIO_InitStructure.GPIO_Pin = CODEC_I2S_WS_PIN | CODEC_I2S_SCK_PIN | CODEC_I2S_SD_PIN; 
@@ -1206,10 +1223,36 @@ static void Delay( __IO uint32_t nCount)
   */
 uint32_t Codec_TIMEOUT_UserCallback(void)
 {
-  /* Block communication and all processes */
-  while (1)
-  {   
-  }
+  /* The following code allows I2C error recovery and return to normal communication
+     if the error source doesn’t still exist (ie. hardware issue..) */
+  I2C_InitTypeDef I2C_InitStructure;
+  
+  /* LCD_ErrLog("> I2C Timeout error occurred\n"); */
+
+  I2C_GenerateSTOP(CODEC_I2C, ENABLE);
+  I2C_SoftwareResetCmd(CODEC_I2C, ENABLE);
+  I2C_SoftwareResetCmd(CODEC_I2C, DISABLE);
+    
+  /* CODEC_I2C peripheral configuration */
+  I2C_DeInit(CODEC_I2C);
+  I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+  I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+  I2C_InitStructure.I2C_OwnAddress1 = 0x33;
+  I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+  I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+  I2C_InitStructure.I2C_ClockSpeed = I2C_SPEED;
+  /* Enable the I2C peripheral */
+  I2C_Cmd(CODEC_I2C, ENABLE);  
+  I2C_Init(CODEC_I2C, &I2C_InitStructure);  
+
+  /* At this stage the I2C error should be recovered and device can communicate
+     again (except if the error source still exist).
+     User can implement mechanism (ex. test on max trial number) to manage situation
+     when the I2C can't recover from current error. */
+
+  /* LCD_UsrLog("> I2C error recovered.\n"); */
+
+  return 0;
 }
 #endif /* USE_DEFAULT_TIMEOUT_CALLBACK */
 /*========================
@@ -1355,8 +1398,7 @@ static void Audio_MAL_PauseResume(uint32_t Cmd, uint32_t Addr)
     /* Pause the I2S DMA Stream 
         Note. For the STM32F2xx devices, the DMA implements a pause feature, 
               by disabling the stream, all configuration is preserved and data 
-              transfer is paused till the next enable of the stream.
-              This feature is not available on STM32F1xx devices. */
+              transfer is paused till the next enable of the stream.*/
     DMA_Cmd(AUDIO_MAL_DMA_STREAM, DISABLE);
   }
   else /* AUDIO_RESUME */
@@ -1367,8 +1409,7 @@ static void Audio_MAL_PauseResume(uint32_t Cmd, uint32_t Addr)
     /* Resume the I2S DMA Stream 
         Note. For the STM32F2xx devices, the DMA implements a pause feature, 
               by disabling the stream, all configuration is preserved and data 
-              transfer is paused till the next enable of the stream.
-              This feature is not available on STM32F1xx devices. */
+              transfer is paused till the next enable of the stream.*/
     DMA_Cmd(AUDIO_MAL_DMA_STREAM, ENABLE);
     
     /* If the I2S peripheral is still not enabled, enable it */
@@ -1421,4 +1462,4 @@ static void Audio_MAL_Stop(void)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

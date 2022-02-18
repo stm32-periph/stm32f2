@@ -2,20 +2,26 @@
   ******************************************************************************
   * @file    TIM/Parallel_Synchro/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -59,7 +65,8 @@ int main(void)
   /* TIM Configuration */
   TIM_Config();
 
-  /* Timers synchronisation in parallel mode -----------------------------------
+  /* ---------------------------------------------------------------------------
+     Timers synchronisation in parallel mode
      1/TIM2 is configured as Master Timer:
          - PWM Mode is used
          - The TIM2 Update event is used as Trigger Output  
@@ -68,18 +75,37 @@ int main(void)
          - The ITR1(TIM2) is used as input trigger for both slaves
          - Gated mode is used, so starts and stops of slaves counters
            are controlled by the Master trigger output signal(update event).
+  
+    TIM2 input clock (TIM2CLK) is set to 2 * APB1 clock (PCLK1), 
+    since APB1 prescaler is different from 1.   
+      TIM2CLK = 2 * PCLK1  
+      PCLK1 = HCLK / 4 
+      => TIM2CLK = HCLK / 2 = SystemCoreClock /2
+     
+    To get Master Timer TIM2 output clock at 234.375 KHz running at  and the 
+    duty cycle is equal to 25% :
+    
+    The period (TIM2_ARR) is computed as follows:
+    ARR = (TIM2 counter clock / TIM2 output clock) - 1
+        = 255
 
-  The TIM2 counter clock is 60 MHz.
-     The Master Timer TIM2 is running at 234.375 KHz and the duty cycle
-     is equal to 25%
+    The dutu cycle (TIM2_CCR1) is computed as follows:
+    CCR1 = ((TIM2_ARR + 1) * 25)/100
+         = 64
      
-     The TIM3 is running:
-     - At (TIM2 frequency)/ (TIM3 period + 1) = 23.437 KHz and a duty cycle
-       equal to TIM3_CCR1/(TIM3_ARR + 1) = 30%
+    The TIM3 is running:
+    - At (TIM2 frequency)/ (TIM3 period + 1) = 23.437 KHz and a duty cycle
+      equal to TIM3_CCR1/(TIM3_ARR + 1) = 30%
      
-     The TIM4 is running:
-     - At (TIM2 frequency)/ (TIM4 period + 1) = 46.875 KHz and a duty cycle
-       equal to TIM4_CCR1/(TIM4_ARR + 1) = 60%
+    The TIM4 is running:
+    - At (TIM2 frequency)/ (TIM4 period + 1) = 46.875 KHz and a duty cycle
+      equal to TIM4_CCR1/(TIM4_ARR + 1) = 60%
+      
+    Note: 
+     SystemCoreClock variable holds HCLK frequency and is defined in system_stm32f2xx.c file.
+     Each time the core clock (HCLK) changes, user had to call SystemCoreClockUpdate()
+     function to update SystemCoreClock variable value. Otherwise, any configuration
+     based on this variable will be incorrect.    
      
   ----------------------------------------------------------------------------*/
 
@@ -203,4 +229,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

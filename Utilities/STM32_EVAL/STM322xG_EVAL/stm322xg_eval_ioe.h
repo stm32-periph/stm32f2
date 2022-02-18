@@ -2,22 +2,28 @@
   ******************************************************************************
   * @file    stm322xg_eval_ioe.h
   * @author  MCD Application Team
-  * @version V4.6.1
-  * @date    18-April-2011
+  * @version V5.0.3
+  * @date    09-March-2012
   * @brief   This file contains all the functions prototypes for the
   *          stm322xg_eval_ioe.c driver.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */ 
 
   /* File Info : ---------------------------------------------------------------
@@ -41,7 +47,7 @@
 #endif   
    
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f2xx.h"
+#include "stm322xg_eval.h"
 
 /** @addtogroup Utilities
   * @{
@@ -78,7 +84,7 @@ typedef struct
 /** 
   * @brief  Joystick State definitions  
   */ 
-#ifndef __STM32_EVAL_H
+#ifndef __STM322xG_EVAL_H
 typedef enum 
 { 
   JOY_NONE = 0,
@@ -89,7 +95,7 @@ typedef enum
   JOY_UP = 5
 } JOYState_TypeDef
 ;
-#endif /* __STM32_EVAL_H */
+#endif /* __STM322xG_EVAL_H */
  
 /** 
   * @brief  IO_Expander Error codes  
@@ -195,10 +201,22 @@ typedef enum
   */
 #define IOE_DMA_CLK                      RCC_AHB1Periph_DMA1
 #define IOE_DMA_CHANNEL                  DMA_Channel_1
-#define IOE_DMA_TX_STREAM                DMA1_Stream6   
-#define IOE_DMA_RX_STREAM                DMA1_Stream0
-#define IOE_DMA_TX_TCFLAG                DMA_FLAG_TCIF6
-#define IOE_DMA_RX_TCFLAG                DMA_FLAG_TCIF0
+
+#ifndef IOE_DMA_TX_STREAM
+ #define IOE_DMA_TX_STREAM               DMA1_Stream6
+#endif /* IOE_DMA_TX_STREAM */
+
+#ifndef IOE_DMA_TX_TCFLAG 
+ #define IOE_DMA_TX_TCFLAG               DMA_FLAG_TCIF6
+#endif /* IOE_DMA_TX_TCFLAG */
+
+#ifndef IOE_DMA_RX_STREAM
+ #define IOE_DMA_RX_STREAM               DMA1_Stream0
+#endif /* IOE_DMA_RX_STREAM */
+
+#ifndef IOE_DMA_RX_TCFLAG 
+ #define IOE_DMA_RX_TCFLAG               DMA_FLAG_TCIF0
+#endif /* IOE_DMA_RX_TCFLAG */
 
 /** 
   * @brief  IO Expander Interrupt line on EXTI  
@@ -544,4 +562,4 @@ uint16_t I2C_ReadDataBuffer(uint8_t DeviceAddr, uint8_t RegisterAddr);
 /**
   * @}
   */       
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

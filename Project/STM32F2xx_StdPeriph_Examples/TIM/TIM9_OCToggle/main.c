@@ -2,20 +2,26 @@
   ******************************************************************************
   * @file    TIM/TIM9_OCToggle/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    18-April-2011
+  * @version V1.1.0
+  * @date    13-April-2012
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -63,20 +69,33 @@ int main(void)
   TIM_Config();
 
   /* ---------------------------------------------------------------------------
-    TIM9 Configuration: Output Compare Toggle Mode:
-    TIM9CLK = SystemCoreClock,
-    The objective is to get TIM9 counter clock at 15 MHz:
-    - Prescaler = (TIM9CLK / TIM9 counter clock) - 1
-
-    - CC1 update rate = TIM9 counter clock / CCR1_Val = 366.2 Hz
-      ==> So the TIM9 Channel 1 generates a periodic signal with 
+     TIM9 Configuration: Output Compare Toggle Mode:
+    
+    In this example TIM9 input clock (TIM9CLK) is set to 2 * APB2 clock (PCLK2), 
+    since APB2 prescaler is different from 1.   
+      TIM9CLK = 2 * PCLK2  
+      PCLK2 = HCLK / 2 
+      => TIM9CLK = HCLK = SystemCoreClock
+          
+    To get TIM9 counter clock at 15 MHz, the prescaler is computed as follows:
+       Prescaler = (TIM9CLK / TIM9 counter clock) - 1
+       Prescaler = (SystemCoreClock /15 MHz) - 1
+                                              
+    CC1 update rate = TIM9 counter clock / CCR1_Val = 366.2 Hz
+    ==> So the TIM9 Channel 1 generates a periodic signal with 
 	      a frequency equal to 183.1 Hz
 
-    - CC2 update rate = TIM9 counter clock / CCR2_Val = 732.4 Hz
-      ==> So the TIM9 channel 2 generates a periodic signal with 
+    CC2 update rate = TIM9 counter clock / CCR2_Val = 732.4 Hz
+    ==> So the TIM9 channel 2 generates a periodic signal with 
 	      a frequency equal to 366.3 Hz
 
-  ----------------------------------------------------------------------------*/
+    Note: 
+     SystemCoreClock variable holds HCLK frequency and is defined in system_stm32f2xx.c file.
+     Each time the core clock (HCLK) changes, user had to call SystemCoreClockUpdate()
+     function to update SystemCoreClock variable value. Otherwise, any configuration
+     based on this variable will be incorrect.    
+  --------------------------------------------------------------------------- */   
+
 
   /* Compute the prescaler value */
   PrescalerValue = (uint16_t) (SystemCoreClock / 15000000) - 1;
@@ -178,4 +197,4 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
