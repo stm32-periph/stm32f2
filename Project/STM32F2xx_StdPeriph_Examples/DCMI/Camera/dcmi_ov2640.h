@@ -2,28 +2,21 @@
   ******************************************************************************
   * @file    DCMI/Camera/dcmi_ov2640.h
   * @author  MCD Application Team
-  * @version V1.1.0
+  * @version V1.2.0
   * @date    13-April-2012
   * @brief   Header for dcmi_ov2640.c module
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * Copyright (c) 2012 STMicroelectronics.
+  * All rights reserved.
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __DCMI_OV2640_H
@@ -156,5 +149,4 @@ uint8_t OV2640_ReadReg(uint16_t Addr);
 
 #endif /* __DCMI_OV2640_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm322xg_eval_fsmc_sram.c
   * @author  MCD Application Team
-  * @version V5.0.3
-  * @date    09-March-2012
+  * @version V5.1.3
+  * @date    31-September-2021
   * @brief   This file provides a set of functions needed to drive the
   *          IS61WV102416BLL SRAM memory mounted on STM322xG-EVAL evaluation
   *          board(MB786) RevB.
@@ -13,19 +13,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -227,17 +220,17 @@ void SRAM_Init(void)
   GPIO_Init(GPIOG, &GPIO_InitStructure);
 
 /*-- FSMC Configuration ------------------------------------------------------*/
-  p.FSMC_AddressSetupTime = 0;
+  p.FSMC_AddressSetupTime = 1;
   p.FSMC_AddressHoldTime = 0;
-  p.FSMC_DataSetupTime = 4;
-  p.FSMC_BusTurnAroundDuration = 1;
+  p.FSMC_DataSetupTime = 2;
+  p.FSMC_BusTurnAroundDuration = 0;
   p.FSMC_CLKDivision = 0;
   p.FSMC_DataLatency = 0;
   p.FSMC_AccessMode = FSMC_AccessMode_A;
 
   FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM2;
   FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable;
-  FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_PSRAM;
+  FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_SRAM;
   FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b;
   FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable;
   FSMC_NORSRAMInitStructure.FSMC_AsynchronousWait = FSMC_AsynchronousWait_Disable;  
@@ -318,4 +311,4 @@ void SRAM_ReadBuffer(uint16_t* pBuffer, uint32_t ReadAddr, uint32_t NumHalfwordT
   * @}
   */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

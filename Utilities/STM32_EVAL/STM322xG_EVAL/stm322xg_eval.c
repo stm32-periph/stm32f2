@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm322xg_eval.c
   * @author  MCD Application Team
-  * @version V5.0.3
-  * @date    09-March-2012
+  * @version V5.1.3
+  * @date    31-September-2021
   * @brief   This file provides
   *            - set of firmware functions to manage Leds, push-button and COM ports
   *            - low level initialization functions for SD card (on SDIO) and
@@ -14,19 +14,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -196,7 +189,7 @@ void STM_EVAL_LEDInit(Led_TypeDef Led)
   */
 void STM_EVAL_LEDOn(Led_TypeDef Led)
 {
-  GPIO_PORT[Led]->BSRRL = GPIO_PIN[Led];
+  GPIO_PORT[Led]->BSRR = (uint32_t)GPIO_PIN[Led];
 }
 
 /**
@@ -211,7 +204,7 @@ void STM_EVAL_LEDOn(Led_TypeDef Led)
   */
 void STM_EVAL_LEDOff(Led_TypeDef Led)
 {
-  GPIO_PORT[Led]->BSRRH = GPIO_PIN[Led];  
+  GPIO_PORT[Led]->BSRR = (uint32_t)GPIO_PIN[Led]<< 16;  
 }
 
 /**
@@ -431,7 +424,7 @@ void SD_LowLevel_Init(void)
 
   /* Configure PC.08, PC.09, PC.10, PC.11 pins: D0, D1, D2, D3 pins */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
@@ -734,4 +727,4 @@ void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize, uint32_t Dire
   * @}
   */ 
     
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

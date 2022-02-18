@@ -2,27 +2,20 @@
   ******************************************************************************
   * @file    stm322xg_eval_lcd.c
   * @author  MCD Application Team
-  * @version V5.0.3
-  * @date    09-March-2012
+  * @version V5.1.3
+  * @date    31-September-2021
   * @brief   This file includes the LCD driver for AM-240320L8TNQW00H (LCD_ILI9320)
   *          and AM240320D5TOQW01H (LCD_ILI9325) Liquid Crystal Display Modules
   *          of STM322xG-EVAL evaluation board(MB786) RevA and RevB.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */ 
@@ -1435,4 +1428,4 @@ static void delay(__IO uint32_t nCount)
   * @}
   */  
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

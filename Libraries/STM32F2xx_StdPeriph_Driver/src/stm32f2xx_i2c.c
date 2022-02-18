@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f2xx_i2c.c
   * @author  MCD Application Team
-  * @version V1.1.2
-  * @date    05-March-2012 
+  * @version V1.1.3
+  * @date    31-December-2021 
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Inter-integrated circuit (I2C)
   *           - Initialization and Configuration
@@ -72,19 +72,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * Copyright (c) 2012 STMicroelectronics.
+  * All rights reserved.
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -1106,7 +1099,16 @@ ErrorStatus I2C_CheckEvent(I2C_TypeDef* I2Cx, uint32_t I2C_EVENT)
 
   /* Read the I2Cx status register */
   flag1 = I2Cx->SR1;
-  flag2 = I2Cx->SR2;
+
+  /* I2C_SR2 must be read only when ADDR is found set in I2C_SR1 or when the STOPF bit is cleared */
+  if((flag1 & I2C_SR1_ADDR) || (flag1 & ~I2C_SR1_STOPF)) 
+  {
+    flag2 = I2Cx->SR2;
+  }
+  else 
+  { 
+    return ERROR; 
+  }
   flag2 = flag2 << 16;
 
   /* Get the last event value from I2C status register */
@@ -1398,4 +1400,3 @@ void I2C_ClearITPendingBit(I2C_TypeDef* I2Cx, uint32_t I2C_IT)
   * @}
   */ 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

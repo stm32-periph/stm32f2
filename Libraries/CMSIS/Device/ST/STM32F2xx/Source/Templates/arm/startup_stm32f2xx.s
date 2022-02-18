@@ -1,8 +1,8 @@
 ;******************** (C) COPYRIGHT 2012 STMicroelectronics ********************
 ;* File Name          : startup_stm32f2xx.s
 ;* Author             : MCD Application Team
-;* Version            : V1.1.3
-;* Date               : 05-March-2012
+;* Version            : V1.1.5
+;* Date               : 31-December-2021
 ;* Description        : STM32F2xx devices vector table for MDK-ARM toolchain. 
 ;*                      This module performs:
 ;*                      - Set the initial SP
@@ -17,19 +17,14 @@
 ;*                      priority is Privileged, and the Stack is set to Main.
 ;* <<< Use Configuration Wizard in Context Menu >>>   
 ;*******************************************************************************
-; 
-; Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-; You may not use this file except in compliance with the License.
-; You may obtain a copy of the License at:
-; 
-;        http://www.st.com/software_license_agreement_liberty_v2
-; 
-; Unless required by applicable law or agreed to in writing, software 
-; distributed under the License is distributed on an "AS IS" BASIS, 
-; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-; See the License for the specific language governing permissions and
-; limitations under the License.
-; 
+;
+; Copyright (c) 2012 STMicroelectronics.
+; All rights reserved.
+;
+; This software is licensed under terms that can be found in the LICENSE file
+; in the root directory of this software component.
+; If no LICENSE file comes with this software, it is provided AS-IS.
+;
 ;*******************************************************************************
 
 ; Amount of memory (in bytes) allocated for Stack
@@ -174,8 +169,8 @@ __Vectors_Size  EQU  __Vectors_End - __Vectors
 ; Reset handler
 Reset_Handler    PROC
                  EXPORT  Reset_Handler             [WEAK]
-        IMPORT  SystemInit
-        IMPORT  __main
+				IMPORT  SystemInit
+				IMPORT  __main
                  LDR     R0, =SystemInit
                  BLX     R0
                  LDR     R0, =__main
@@ -426,4 +421,4 @@ __user_initial_stackheap
 
                  END
 
-;************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE*****
+

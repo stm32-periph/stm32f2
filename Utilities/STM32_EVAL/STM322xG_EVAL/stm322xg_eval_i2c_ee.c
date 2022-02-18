@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm322xg_eval_i2c_ee.c
   * @author  MCD Application Team
-  * @version V5.0.3
-  * @date    09-March-2012
+  * @version V5.1.3
+  * @date    31-September-2021
   * @brief   This file provides a set of functions needed to manage the I2C M24CXX 
   *          EEPROM memory mounted on STM322xG-EVAL evaluation board(MB786) RevA
   *          and RevB.
@@ -49,19 +49,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */ 
@@ -169,9 +162,6 @@ void sEE_Init(void)
   I2C_Cmd(sEE_I2C, ENABLE);
   /* Apply sEE_I2C configuration after enabling it */
   I2C_Init(sEE_I2C, &I2C_InitStructure);
-
-  /* Enable the sEE_I2C peripheral DMA requests */
-  I2C_DMACmd(sEE_I2C, ENABLE);
   
 #if defined (sEE_M24C64_32)
   /*!< Select the EEPROM address according to the state of E0, E1, E2 pins */
@@ -357,7 +347,10 @@ uint32_t sEE_ReadBuffer(uint8_t* pBuffer, uint16_t ReadAddr, uint16_t* NumByteTo
     I2C_DMALastTransferCmd(sEE_I2C, ENABLE); 
     
     /* Enable the DMA Rx Stream */
-    DMA_Cmd(sEE_I2C_DMA_STREAM_RX, ENABLE);    
+    DMA_Cmd(sEE_I2C_DMA_STREAM_RX, ENABLE);
+
+    /* Enable the sEE_I2C peripheral DMA requests */
+    I2C_DMACmd(sEE_I2C, ENABLE);    
   }
   
   /* If all operations OK, return sEE_OK (0) */
@@ -461,6 +454,9 @@ uint32_t sEE_WritePage(uint8_t* pBuffer, uint16_t WriteAddr, uint8_t* NumByteToW
   
   /* Enable the DMA Tx Stream */
   DMA_Cmd(sEE_I2C_DMA_STREAM_TX, ENABLE);
+  
+  /* Enable the sEE_I2C peripheral DMA requests */
+  I2C_DMACmd(sEE_I2C, ENABLE);    
   
   /* If all operations OK, return sEE_OK (0) */
   return sEE_OK;
@@ -811,4 +807,4 @@ uint32_t sEE_TIMEOUT_UserCallback(void)
   * @}
   */  
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

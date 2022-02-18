@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f2xx_rtc.c
   * @author  MCD Application Team
-  * @version V1.1.2
-  * @date    05-March-2012 
+  * @version V1.1.3
+  * @date    31-December-2021 
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the Real-Time Clock (RTC) peripheral:
   *           - Initialization
@@ -243,22 +243,15 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * Copyright (c) 2012 STMicroelectronics.
+  * All rights reserved.
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx_rtc.h"
@@ -2127,7 +2120,7 @@ void RTC_ClearFlag(uint32_t RTC_FLAG)
   assert_param(IS_RTC_CLEAR_FLAG(RTC_FLAG));
 
   /* Clear the Flags in the RTC_ISR register */
-  RTC->ISR = (uint32_t)((uint32_t)(~((RTC_FLAG | RTC_ISR_INIT)& 0x0000FFFF) | (uint32_t)(RTC->ISR & RTC_ISR_INIT)));  
+  RTC->ISR = (uint32_t)((uint32_t)(~((RTC_FLAG | RTC_ISR_INIT)& 0x00003FF7) | (uint32_t)(RTC->ISR & RTC_ISR_INIT)));  
 }
 
 /**
@@ -2192,7 +2185,7 @@ void RTC_ClearITPendingBit(uint32_t RTC_IT)
   tmpreg = (uint32_t)(RTC_IT >> 4);
 
   /* Clear the interrupt pending bits in the RTC_ISR register */
-  RTC->ISR = (uint32_t)((uint32_t)(~((tmpreg | RTC_ISR_INIT)& 0x0000FFFF) | (uint32_t)(RTC->ISR & RTC_ISR_INIT))); 
+  RTC->ISR = (uint32_t)((uint32_t)(~((tmpreg | RTC_ISR_INIT)& 0x00003FF7) | (uint32_t)(RTC->ISR & RTC_ISR_INIT))); 
 }
 
 /**
@@ -2241,4 +2234,3 @@ static uint8_t RTC_Bcd2ToByte(uint8_t Value)
   * @}
   */ 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -5,38 +5,32 @@
   ******************** (C) COPYRIGHT 2012 STMicroelectronics *******************
   * @file    GPIO/IOToggle/readme.txt 
   * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    13-April-2012
+  * @version V1.2.0
+  * @date    31-December-2021
   * @brief   Description of the GPIO IO Toggle example.
   ******************************************************************************
+  * @attention
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
+  * Copyright (c) 2012 STMicroelectronics.
+  * All rights reserved.
   *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
    @endverbatim
 
 @par Example Description 
 
-GPIO ports are connected on AHB bus, using BSRRH and BSRRL registers one cycle is
+GPIO ports are connected on AHB bus, using BSRR register one cycle is
 required to set a pin and another cycle to reset it. So GPIO pins can toggle at
 AHB clock divided by 2.
 
-This example describes how to use BSRRH and BSRRL (Port Bit Set/Reset Register
-High and Low) for maximum IO toggling.
+This example describes how to use BSRR (Port Bit Set/Reset Register) for maximum IO toggling.
 
 PG6 and PG8 (configured in output pushpull mode) toggles in a forever loop:
- - Set PG6 and PG8 by setting corresponding bits in BSRRL register
- - Reset PG6 and PG8 by setting corresponding bits in BSRRH register
+ - Set/Reset PG6 and PG8 by setting corresponding bits in BSRR register.
 
 In this example, HCLK is configured at 120 MHz so PG6 and PG8 toggles at 60MHz.
 To achieve the maximum IO toggling frequency, you have to configure your compiler
@@ -79,7 +73,7 @@ In order to make the program work, you must do the following :
 
 
     
- * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
+
  */
 
 
